@@ -1,0 +1,155 @@
+/* Root variables */
+:root {
+  --green: #2D5D59;
+  --green-dark: #22c55e;
+  --green-dim: rgba(57, 255, 20, 0.12);
+  --bg: #060a06;
+  --surface: #0d130d;
+  --surface2: #111911;
+  --text: #2D5D59;
+  --muted: #888888;
+}
+
+/* Subtle grid background */
+.bgGrid::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(57, 255, 20, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow blob */
+.glowBlob {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(57, 255, 20, 0.06) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Pulse animation for badge */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.badgeDot {
+  animation: pulse 2s infinite;
+}
+
+/* Float animation for icons */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.floatIcon {
+  animation: float 6s ease-in-out infinite;
+}
+
+.fiNetflix {
+  animation-delay: 0s;
+}
+
+.fiSpotify {
+  animation-delay: 1s;
+}
+
+.fiPs {
+  animation-delay: 0.5s;
+}
+
+.fiMtn {
+  animation-delay: 1.5s;
+}
+
+.fiUber {
+  animation-delay: 2s;
+}
+
+.fiDstv {
+  animation-delay: 2.5s;
+}
+
+/* Ticker animation */
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.tickerTrack {
+  display: flex;
+  gap: 3rem;
+  white-space: nowrap;
+  width: max-content;
+}
+
+.tickerTrack {
+  animation: ticker 20s linear infinite;
+}
+
+/* Fade up animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeUpItem {
+  animation: fadeUp 0.7s ease both;
+}
+
+.fadeUpItem:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.fadeUpItem:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.fadeUpItem:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.fadeUpItem:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.fadeUpItem:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.fadeUpItem:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+.fadeUpRight {
+  animation: fadeUp 0.9s 0.3s ease both;
+}

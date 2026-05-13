@@ -1,0 +1,55 @@
+'use client';
+
+import Link from 'next/link';
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { useState } from 'react';
+
+interface BalanceCardProps {
+  balance: number;
+}
+
+export default function BalanceCard({ balance }: BalanceCardProps) {
+  const [isBalanceVisible, setIsBalanceVisible] = useState(true);
+
+  const formattedBalance = balance.toLocaleString('en-NG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  return (
+    <div className="bg-gradient-to-br from-[#1C3F3B] via-[#1F4440] to-[#0F2C2A] rounded-2xl p-3 xs:p-4 sm:p-5 relative overflow-hidden shadow-lg border border-white/10">
+      {/* Glow effect */}
+      <div className="absolute -top-20 -right-20 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
+      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#22C55E]/5 rounded-full blur-3xl"></div>
+
+      <div className="relative z-10">
+        {/* Top Section */}
+        <div className="flex justify-between items-start mb-2 xs:mb-3 sm:mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 xs:w-4 xs:h-4 rounded-full border border-white/40 flex items-center justify-center">
+              <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
+            </div>
+            <span className="text-[10px] xs:text-xs text-white/70 font-medium tracking-wide">Total Balance</span>
+          </div>
+          <button
+            onClick={() => setIsBalanceVisible(!isBalanceVisible)}
+            className="p-1.5 hover:bg-white/10 rounded-lg transition-all duration-300 hover:scale-[1.05]"
+            title={isBalanceVisible ? 'Hide balance' : 'Show balance'}
+          >
+            {isBalanceVisible ? (
+              <MdVisibility size={16} className="text-white/70 hover:text-white" />
+            ) : (
+              <MdVisibilityOff size={16} className="text-white/70 hover:text-white" />
+            )}
+          </button>
+        </div>
+
+        {/* Balance Amount */}
+        <div className="font-sans text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-3 xs:mb-4 sm:mb-6 text-white transition-all duration-300">
+          {isBalanceVisible ? `₦${formattedBalance}` : '••••••••'}
+        </div>
+      </div>
+    </div>
+  );
+}
+
