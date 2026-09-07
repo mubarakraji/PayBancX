@@ -17,17 +17,17 @@ export default function BalanceCard({ balance }: BalanceCardProps) {
   });
 
   return (
-    <div className="bg-gradient-to-br from-[#1C3F3B] via-[#1F4440] to-[#0F2C2A] rounded-2xl p-3 xs:p-4 sm:p-5 relative overflow-hidden shadow-lg border border-white/10">
+    <div className="relative overflow-hidden rounded-2xl border border-[#2f746b] bg-[#123c37] p-3 shadow-[0_18px_40px_rgba(18,60,55,0.18)] xs:p-4 sm:p-5">
       {/* Glow effect */}
       <div className="absolute -top-20 -right-20 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#22C55E]/5 rounded-full blur-3xl"></div>
+      <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#f5c84b]/10 blur-3xl"></div>
 
       <div className="relative z-10">
         {/* Top Section */}
         <div className="flex justify-between items-start mb-2 xs:mb-3 sm:mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 xs:w-4 xs:h-4 rounded-full border border-white/40 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white"></div>
+            <div className="flex h-3 w-3 items-center justify-center rounded-full border border-[#f5c84b]/70 xs:h-4 xs:w-4">
+              <div className="h-1.5 w-1.5 rounded-full bg-[#f5c84b] xs:h-2 xs:w-2"></div>
             </div>
             <span className="text-[10px] xs:text-xs text-white/70 font-medium tracking-wide">Total Balance</span>
           </div>

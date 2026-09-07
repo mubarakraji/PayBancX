@@ -39,7 +39,7 @@ export function Header() {
   };
 
   return (
-    <div className="hidden md:flex items-center justify-between px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-3 md:py-4 border-b border-[#1C3F3B]/10 bg-gradient-to-r from-white to-white sticky top-0 z-40 shadow-sm">
+    <div className="sticky top-0 z-40 hidden items-center justify-between border-b border-[#dce8e1] bg-white/95 px-4 py-3 shadow-[0_4px_18px_rgba(18,60,55,0.04)] backdrop-blur md:flex sm:px-5 md:px-6 lg:px-8">
       {/* Left: Search Bar */}
       <div className="flex-1 max-w-md">
         <div className="relative">
@@ -47,7 +47,7 @@ export function Header() {
           <input
             type="text"
             placeholder="Search transactions, cards..."
-            className="w-full pl-10 pr-4 py-2 bg-[#F5F6F8] border border-[#1C3F3B]/10 rounded-lg text-xs sm:text-sm text-[#333333] placeholder-[#888888] focus:outline-none focus:ring-2 focus:ring-[#1C3F3B]/20 focus:bg-white transition-all duration-300"
+            className="w-full rounded-xl border border-[#dce8e1] bg-[#f4f7f3] py-2 pl-10 pr-4 text-xs text-[#123c37] placeholder-[#667875] transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#f5c84b]/40 sm:text-sm"
           />
         </div>
       </div>
@@ -70,7 +70,7 @@ export function Header() {
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center gap-3 px-4 py-2 hover:bg-[#1C3F3B]/5 rounded-lg transition-all duration-300 hover:scale-[1.02]"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1C3F3B] to-[#1F4440] flex items-center justify-center text-white text-xs sm:text-sm font-bold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#123c37] text-xs font-bold text-white sm:text-sm">
               {getInitial()}
             </div>
             <div className="hidden lg:block text-left">
