@@ -246,7 +246,7 @@ export default function ElectricityPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-16 text-[#122927] md:pb-6">
       <header className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -262,7 +262,7 @@ export default function ElectricityPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         {/* Select DISCO */}
         <section className="relative mb-3">
           <label className="block font-semibold text-paybancx-text-dark mb-2 text-sm">

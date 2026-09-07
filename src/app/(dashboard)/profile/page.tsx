@@ -74,7 +74,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#F5F6F8] pb-12 md:pb-6">
       {/* Header - Responsive */}
       <div className="bg-white border-b border-[#2D5D59]/10 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-4 md:py-4">
+        <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-4 md:py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
@@ -90,7 +90,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
+      <main className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
         {/* Error Message - Responsive */}
         {profileError && (
           <div className="mb-5 bg-red-500/10 border border-red-500/20 rounded-lg p-3 sm:p-4 flex items-gap-2 gap-3">

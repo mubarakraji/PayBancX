@@ -242,7 +242,7 @@ export default function TransferToQRPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-20 text-[#122927] md:pb-6">
       <div className="sticky top-0 z-10 border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
           <button
             onClick={() => {
               stopScanning();
@@ -261,7 +261,7 @@ export default function TransferToQRPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-4xl px-3 py-4 xs:px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 md:py-5">
+      <div className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 md:py-5">
         {/* Tab Switcher */}
         <div className="mb-8 flex gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-sm">
           <button

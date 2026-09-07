@@ -49,7 +49,7 @@ export default function TransferPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
       <div className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -65,7 +65,7 @@ export default function TransferPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-6xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
+      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
         <div className="mb-8 grid grid-cols-1 gap-4 md:mb-10 md:grid-cols-2 md:gap-5">
           {transferOptions.map((option) => (
             <button

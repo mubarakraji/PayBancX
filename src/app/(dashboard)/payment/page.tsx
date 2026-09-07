@@ -74,7 +74,7 @@ export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-6 text-[#122927]">
       <header className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -90,7 +90,7 @@ export default function PaymentPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {paymentOptions.map((option) => (
             <button

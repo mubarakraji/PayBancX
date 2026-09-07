@@ -9,7 +9,7 @@ export default function TermsPrivacyPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
       <div className="border-b border-[#1C3F3B]/10 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -25,7 +25,7 @@ export default function TermsPrivacyPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         <div className="rounded-3xl border border-[#E5E7EB] bg-white p-6 text-center shadow-sm sm:p-8">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#64748B]/10 text-[#64748B]">
             <MdDescription size={28} />
