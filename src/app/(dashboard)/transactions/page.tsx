@@ -197,7 +197,7 @@ export default function TransactionsPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-16 text-[#122927] md:pb-6">
       <div className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -213,7 +213,7 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
+      <div className="mx-0 max-w-7xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
         <div className="mb-4 rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm xs:mb-6 sm:p-5">
           {/* Search Bar */}
           <div className="mb-4 xs:mb-5">

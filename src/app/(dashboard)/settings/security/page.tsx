@@ -70,7 +70,7 @@ export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
       <div className="border-b border-[#1C3F3B]/10 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -86,7 +86,7 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+      <main className="mx-0 max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         <section className="rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-base font-semibold text-[#122927]">Security settings</h2>

@@ -169,7 +169,7 @@ const TVSubscription = () => {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-32 text-[#122927] md:pb-20">
       <header className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-6 sm:py-4 md:px-8">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-6 sm:py-4 md:px-8">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -185,7 +185,7 @@ const TVSubscription = () => {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl space-y-3 px-3 py-4 xs:px-4 sm:px-6 sm:py-5 md:px-8 md:space-y-4">
+      <main className="mx-0 max-w-7xl space-y-3 px-3 py-4 xs:px-4 sm:px-6 sm:py-5 md:px-8 md:space-y-4">
         {/* Select Provider */}
         <div className="form-group relative">
           <label className="block text-sm font-medium mb-2 text-paybancx-text-muted">Select Provider</label>

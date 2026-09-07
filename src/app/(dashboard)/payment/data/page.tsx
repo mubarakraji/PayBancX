@@ -191,7 +191,7 @@ export default function DataPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-16 text-[#122927] md:pb-6">
       <header className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -207,7 +207,7 @@ export default function DataPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+      <main className="mx-0 max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           {/* Left Column - Form */}
           <div className="lg:col-span-2 space-y-3">

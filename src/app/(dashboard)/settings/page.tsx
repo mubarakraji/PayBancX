@@ -105,7 +105,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
       <div className="border-b border-[#1C3F3B]/10 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -121,7 +121,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <main className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6 lg:py-6">
+      <main className="mx-0 flex max-w-7xl flex-col gap-4 px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6 lg:py-6">
         <section className="overflow-hidden rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
           <div className="border-b border-[#E5E7EB] bg-gradient-to-r from-[#1C3F3B] to-[#2D5D59] px-4 py-5 text-white sm:px-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

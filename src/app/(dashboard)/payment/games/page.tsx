@@ -167,7 +167,7 @@ export default function GamesPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-20 text-[#122927] md:pb-8">
       <header className="border-b border-[#E5E7EB] bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-6 sm:py-4 md:px-8">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-6 sm:py-4 md:px-8">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -183,7 +183,7 @@ export default function GamesPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-6 sm:py-5 md:px-8">
+      <main className="mx-0 max-w-7xl px-3 py-4 xs:px-4 sm:px-6 sm:py-5 md:px-8">
         {/* Select Betting Platform */}
         <section className="mb-5 relative">
           <label className="block font-semibold text-paybancx-text-dark mb-3 text-sm md:text-base">

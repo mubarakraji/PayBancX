@@ -19,7 +19,7 @@ export default function DashboardLayout({
 
         <div className="flex-1 flex min-w-0 flex-col overflow-x-hidden overflow-y-auto">
           <main className="flex-1 w-full bg-[#F5F6F8]">
-            <div className="mx-auto min-h-full w-full max-w-7xl">
+            <div className="min-h-full w-full">
               {children}
             </div>
           </main>

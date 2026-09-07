@@ -47,7 +47,7 @@ export default function PersonalInformationPage() {
   return (
     <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
       <div className="border-b border-[#1C3F3B]/10 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
@@ -63,7 +63,7 @@ export default function PersonalInformationPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+      <main className="mx-0 max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         <form onSubmit={handleSubmit} className="rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6">
           <div className="mb-5 flex items-center gap-3 rounded-2xl bg-[#F8FAFA] p-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1C3F3B]/10 text-[#1C3F3B]">

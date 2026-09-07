@@ -59,7 +59,7 @@ export default function EnterTagPage() {
     <div className="min-h-screen bg-paybancx-bg pb-20 md:pb-8">
       {/* Header */}
       <div className="bg-white border-b border-paybancx-border sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5">
+        <div className="max-w-7xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
@@ -74,7 +74,7 @@ export default function EnterTagPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
+      <div className="max-w-7xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
         {/* Tab Switcher */}
         <div className="flex gap-3 mb-8">
           <button

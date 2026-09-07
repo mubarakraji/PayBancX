@@ -31,7 +31,7 @@ export default function KYCVerificationPage() {
     <div className="min-h-screen bg-[#F5F6F8]">
       {/* Header */}
       <div className="bg-white border-b border-[#1C3F3B]/10">
-        <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
+        <div className="max-w-7xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => router.back()}
@@ -51,7 +51,7 @@ export default function KYCVerificationPage() {
       </div>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-3 sm:py-4 md:py-4">
+      <main className="max-w-7xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 py-3 sm:py-4 md:py-4">
         {!isVerified ? (
           <div className="bg-white rounded-lg shadow-sm border border-[#1C3F3B]/10 p-4">
             <div className="mb-5">
