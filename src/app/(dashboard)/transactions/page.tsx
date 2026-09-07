@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { MdArrowUpward, MdArrowDownward, MdSearch, MdArrowBack } from 'react-icons/md';
+import { MdArrowUpward, MdArrowDownward, MdSearch, MdArrowBack, MdClose } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import { getTransactionHistory } from '@/services/walletService';
+import { getTransactionDetail, getTransactionHistory, Transaction as WalletTransaction } from '@/services/walletService';
 import { useAuth } from '@/hooks/useAuth';
 import { toastError } from '@/hooks/useToast';
 import { normalizeAmount } from '@/utils/helpers';
@@ -21,6 +21,7 @@ interface Transaction {
   time?: string;
   status?: string;
   recipient?: string;
+  reference?: string;
 }
 
 export default function TransactionsPage() {
@@ -32,6 +33,10 @@ export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [transactionDetail, setTransactionDetail] = useState<WalletTransaction | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
 
   // Fetch transactions on mount and when authenticated
   useEffect(() => {
@@ -39,6 +44,26 @@ export default function TransactionsPage() {
       fetchTransactions();
     }
   }, [isAuthenticated, page]);
+
+  useEffect(() => {
+    if (!selectedTransaction) {
+      document.body.style.overflow = 'unset';
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedTransaction(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [selectedTransaction]);
 
   const serializeError = (value: unknown): string => {
     if (value instanceof Error) {
@@ -194,6 +219,34 @@ export default function TransactionsPage() {
     return type === 'received' ? 'bg-green-100' : 'bg-red-100';
   };
 
+  const openTransactionDetails = async (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setTransactionDetail(null);
+    setDetailError(null);
+    setIsLoadingDetail(true);
+
+    try {
+      const detail = await getTransactionDetail(transaction.id);
+      setTransactionDetail(detail);
+    } catch (error) {
+      console.error('[Transactions Page] Transaction detail error:', error);
+      setDetailError('Some additional details could not be loaded.');
+    } finally {
+      setIsLoadingDetail(false);
+    }
+  };
+
+  const closeTransactionDetails = () => {
+    setSelectedTransaction(null);
+    setTransactionDetail(null);
+    setDetailError(null);
+  };
+
+  const detailTransaction = transactionDetail || selectedTransaction;
+  const detailType = detailTransaction?.type || 'sent';
+  const detailAmount = detailTransaction ? normalizeAmount(detailTransaction.amount) : 0;
+  const detailDate = detailTransaction ? new Date(detailTransaction.date).toLocaleString() : '';
+
   return (
     <div className="min-h-screen bg-[#F5F6F8] pb-16 text-[#122927] md:pb-6">
       <div className="border-b border-[#E5E7EB] bg-white">
@@ -306,6 +359,16 @@ export default function TransactionsPage() {
             {filteredTransactions.map((transaction, index) => (
               <div
                 key={transaction.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => openTransactionDetails(transaction)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openTransactionDetails(transaction);
+                  }
+                }}
+                aria-label={`View details for ${transaction.description}`}
                 className="rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-sm transition-all duration-200 hover:border-[#1C3F3B]/30 hover:shadow-md xs:p-4 md:p-5 lg:p-6"
               >
                 {/* Mobile Layout */}
@@ -391,6 +454,76 @@ export default function TransactionsPage() {
           </div>
         )}
       </div>
+
+      {selectedTransaction && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-[#122927]/35 p-0 md:items-center md:p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="transaction-details-title"
+          onClick={closeTransactionDetails}
+        >
+          <div
+            className="w-full max-w-lg rounded-t-3xl bg-white p-5 shadow-2xl md:rounded-2xl md:p-6"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#64748B]">Transaction details</p>
+                <h2 id="transaction-details-title" className="mt-1 text-xl font-bold text-[#122927]">
+                  {selectedTransaction.description}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={closeTransactionDetails}
+                aria-label="Close transaction details"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#1C3F3B] transition hover:bg-[#F5F6F8]"
+              >
+                <MdClose size={20} />
+              </button>
+            </div>
+
+            <div className="rounded-2xl bg-[#F5F6F8] p-4 text-center">
+              <p className={`text-2xl font-bold ${detailType === 'received' ? 'text-green-600' : 'text-red-600'}`}>
+                {detailType === 'received' ? '+' : '-'}₦{detailAmount.toLocaleString()}
+              </p>
+              <p className="mt-1 text-sm capitalize text-[#64748B]">
+                {detailTransaction?.status || 'Processing'}
+              </p>
+            </div>
+
+            {isLoadingDetail ? (
+              <p className="py-6 text-center text-sm text-[#64748B]">Loading transaction details...</p>
+            ) : (
+              <div className="mt-5 divide-y divide-[#E5E7EB] text-sm">
+                <div className="flex justify-between gap-4 py-3">
+                  <span className="text-[#64748B]">Date</span>
+                  <span className="text-right font-medium text-[#122927]">{detailDate}</span>
+                </div>
+                {(detailTransaction?.recipient || selectedTransaction.recipient) && (
+                  <div className="flex justify-between gap-4 py-3">
+                    <span className="text-[#64748B]">Recipient</span>
+                    <span className="text-right font-medium text-[#122927]">{detailTransaction?.recipient || selectedTransaction.recipient}</span>
+                  </div>
+                )}
+                {(detailTransaction?.reference || selectedTransaction.reference) && (
+                  <div className="flex justify-between gap-4 py-3">
+                    <span className="text-[#64748B]">Reference</span>
+                    <span className="max-w-[65%] break-all text-right font-medium text-[#122927]">{detailTransaction?.reference || selectedTransaction.reference}</span>
+                  </div>
+                )}
+                <div className="flex justify-between gap-4 py-3">
+                  <span className="text-[#64748B]">Transaction ID</span>
+                  <span className="max-w-[65%] break-all text-right font-medium text-[#122927]">{selectedTransaction.id}</span>
+                </div>
+              </div>
+            )}
+
+            {detailError && <p className="mt-3 text-xs text-[#64748B]">{detailError}</p>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
