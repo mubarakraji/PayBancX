@@ -22,7 +22,8 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
   // Only run auth checks after component has mounted (hydration complete)
   useEffect(() => {
-    setMounted(true);
+    const frame = window.requestAnimationFrame(() => setMounted(true));
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {

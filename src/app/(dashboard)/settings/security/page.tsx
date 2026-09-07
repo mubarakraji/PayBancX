@@ -1,48 +1,33 @@
-/* eslint-disable @next/next/no-style-component-with-dynamic-styles */
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { MdArrowBack, MdLockOutline, MdPassword, MdPrivacyTip } from 'react-icons/md';
 import PINModal from '@/components/common/PINModal';
 import PasswordModal from '@/components/common/PasswordModal';
 import PrivacyModal from '@/components/common/PrivacyModal';
 
-const teal = '#0F172A';
-const tealLight = 'rgba(15, 23, 42, 0.08)';
+const teal = '#1C3F3B';
+const tealLight = 'rgba(28, 63, 59, 0.08)';
 
 const securityItems = [
   {
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={teal} strokeWidth="1.8">
-        <circle cx="12" cy="12" r="1" />
-        <circle cx="12" cy="12" r="7" />
-        <circle cx="12" cy="12" r="11" />
-      </svg>
-    ),
+    icon: <MdLockOutline size={20} className="text-[#1C3F3B]" />,
     bg: tealLight,
     label: 'PIN',
     sub: 'Set your transaction PIN',
     id: 'pin',
   },
   {
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={teal} strokeWidth="1.8">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-      </svg>
-    ),
-    bg: tealLight,
+    icon: <MdPassword size={20} className="text-[#E8960A]" />,
+    bg: 'rgba(232, 150, 10, 0.08)',
     label: 'Password',
     sub: 'Change your password',
     id: 'password',
   },
   {
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={teal} strokeWidth="1.8">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      </svg>
-    ),
-    bg: tealLight,
+    icon: <MdPrivacyTip size={20} className="text-[#7C5CBF]" />,
+    bg: 'rgba(124, 92, 191, 0.08)',
     label: 'Privacy',
     sub: 'Manage privacy settings',
     id: 'privacy',
@@ -51,32 +36,27 @@ const securityItems = [
 
 function SecurityRow({ icon, bg, label, sub, onClick }: { icon: React.ReactNode; bg: string; label: string; sub: string; onClick: () => void }) {
   const [pressed, setPressed] = useState(false);
-  
+
   return (
     <div
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
       onMouseLeave={() => setPressed(false)}
       onClick={onClick}
-      className={`flex items-center gap-2 px-2.5 py-2 mb-1 cursor-pointer transition-all rounded-lg border select-none ${
-        pressed
-          ? 'bg-[#2D5D59]/8 border-[#2D5D59]'
-          : 'bg-white border-[#E2E8F0] hover:border-[#2D5D59] hover:scale-[1.02]'
+      className={`flex cursor-pointer items-center gap-3 rounded-2xl border border-[#E5E7EB] bg-white px-3 py-3.5 transition-all duration-200 ${
+        pressed ? 'border-[#1C3F3B] bg-[#F8FAFA]' : 'hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]'
       }`}
     >
-      <div
-        className="w-9 h-9 rounded-lg flex-shrink-0 flex items-center justify-center"
-        style={{ background: bg }}
-      >
+      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: bg }}>
         {icon}
       </div>
-      <div className="flex-1">
-        <div className="font-semibold text-[11px] text-[#333333]">{label}</div>
-        <div className="text-[10px] text-[#888888] mt-0.5">{sub}</div>
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-semibold text-[#122927]">{label}</div>
+        <div className="mt-0.5 text-sm text-[#64748B]">{sub}</div>
       </div>
-      <svg width="6" height="10" viewBox="0 0 8 14" fill="none" className="flex-shrink-0">
-        <path d="M1 1l6 6-6 6" stroke="rgba(45, 93, 89, 0.3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F8FAFA] text-[#94A3B8]">
+        <MdArrowBack size={16} className="rotate-180" />
+      </div>
     </div>
   );
 }
@@ -88,34 +68,31 @@ export default function SecurityPage() {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8]">
-      {/* Header */}
-      <div className="bg-white border-b border-[#2D5D59]/10">
-        <div className="max-w-5xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.back()}
-              title="Go back"
-              className="md:hidden p-1 -ml-1 hover:bg-[#2D5D59]/5 rounded-lg transition-colors"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <div>
-              <h1 className="text-base sm:text-lg md:text-xl font-bold text-[#333333] font-[family-name:Syne]">Security</h1>
-              <p className="text-[#888888] text-[10px] mt-0.5">Manage your password and authentication</p>
-            </div>
+    <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
+      <div className="border-b border-[#1C3F3B]/10 bg-white">
+        <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+          <button
+            onClick={() => router.back()}
+            title="Go back"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+          >
+            <MdArrowBack size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Security</h1>
+            <p className="text-sm text-[#64748B]">Manage your password and authentication</p>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
-        {/* Security Settings Section */}
-        <div className="mb-4">
-          <h2 className="text-[11px] sm:text-xs font-bold text-[#333333] mb-2 px-1 font-[family-name:Syne]">Security Settings</h2>
-          <div className="space-y-0.5">
+      <main className="mx-auto max-w-5xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+        <section className="rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[#122927]">Security settings</h2>
+            <span className="text-sm text-[#64748B]">Protected</span>
+          </div>
+          <div className="space-y-2.5">
             {securityItems.map((item) => (
               <SecurityRow
                 key={item.id}
@@ -131,10 +108,9 @@ export default function SecurityPage() {
               />
             ))}
           </div>
-        </div>
+        </section>
       </main>
 
-      {/* Modals */}
       <PINModal isOpen={isPINOpen} onClose={() => setIsPINOpen(false)} />
       <PasswordModal isOpen={isPasswordOpen} onClose={() => setIsPasswordOpen(false)} />
       <PrivacyModal isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />

@@ -118,3 +118,119 @@ export const getAuthHeaders = (): HeadersInit => {
   
   return headers;
 };
+
+// Track if token refresh is in progress to avoid multiple simultaneous refresh attempts
+let isRefreshingToken = false;
+let tokenRefreshPromise: Promise<boolean> | null = null;
+
+// Perform token refresh
+const performTokenRefresh = async (): Promise<boolean> => {
+  if (isRefreshingToken) {
+    // Wait for the current refresh to complete
+    return await tokenRefreshPromise!;
+  }
+
+  isRefreshingToken = true;
+  
+  try {
+    tokenRefreshPromise = (async () => {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          console.warn('[TokenRefresh] No token available to refresh');
+          removeAuthToken();
+          return false;
+        }
+
+        const response = await fetch('/api/v1/auth/refresh-token', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error('[TokenRefresh] Token refresh failed:', data.message);
+          removeAuthToken();
+          return false;
+        }
+
+        // Update token if returned
+        const newToken = data.data?.token || data.data?.accessToken || data.token;
+        if (newToken) {
+          setAuthToken(newToken);
+          console.log('[TokenRefresh] Token successfully refreshed');
+          return true;
+        } else {
+          console.warn('[TokenRefresh] No new token in refresh response');
+          return false;
+        }
+      } catch (error) {
+        console.error('[TokenRefresh] Token refresh error:', error);
+        removeAuthToken();
+        return false;
+      } finally {
+        isRefreshingToken = false;
+        tokenRefreshPromise = null;
+      }
+    })();
+
+    return await tokenRefreshPromise;
+  } catch (error) {
+    isRefreshingToken = false;
+    tokenRefreshPromise = null;
+    throw error;
+  }
+};
+
+// Authenticated fetch wrapper with automatic token refresh on 401
+export const authenticatedFetch = async (
+  url: string,
+  options: RequestInit = {},
+  retryCount = 0
+): Promise<Response> => {
+  try {
+    // Add auth headers if not already present
+    const headers = new Headers(options.headers || {});
+    
+    if (!headers.has('Authorization')) {
+      const token = getAuthToken();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+    }
+    
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+    
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    // If response is 401 and we haven't retried yet, try to refresh token
+    if (response.status === 401 && retryCount < 1) {
+      console.log('[API] Received 401, attempting token refresh...');
+      
+      const refreshed = await performTokenRefresh();
+      
+      if (refreshed) {
+        console.log('[API] Token refreshed, retrying request...');
+        // Retry the request with the new token
+        return authenticatedFetch(url, options, retryCount + 1);
+      } else {
+        console.warn('[API] Token refresh failed, returning 401 response');
+        return response;
+      }
+    }
+
+    return response;
+  } catch (error) {
+    console.error('[API] Authenticated fetch error:', error);
+    throw error;
+  }
+};

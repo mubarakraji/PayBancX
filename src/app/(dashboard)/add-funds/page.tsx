@@ -54,14 +54,53 @@ export default function AddFundsPage() {
     }
   };
 
-  const handleCopyToClipboard = (text: string, field: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedField(field);
-    toastSuccess('Copied to clipboard!');
+  const handleCopyToClipboard = async (text: string, field: string) => {
+    if (!text) {
+      toastError('No account detail is available to copy.');
+      return;
+    }
 
-    setTimeout(() => {
-      setCopiedField(null);
-    }, 2000);
+    try {
+      let copied = false;
+
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        } catch {
+          copied = false;
+        }
+      }
+
+      if (!copied) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        copied = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (!copied) {
+          throw new Error('Copy command failed');
+        }
+      }
+
+      setCopiedField(field);
+      toastSuccess(field === 'accountNumber' ? 'Account number copied!' : 'Copied to clipboard!');
+
+      setTimeout(() => {
+        setCopiedField(null);
+      }, 2000);
+    } catch {
+      if (field === 'accountNumber') {
+        toastError('Copy was blocked. Press and hold the account number to copy it.');
+      } else {
+        toastError('Unable to copy. Please copy it manually.');
+      }
+    }
   };
 
   return (
@@ -128,18 +167,30 @@ export default function AddFundsPage() {
                   <div className="space-y-0.5 pb-2.5 border-b border-paybancx-border">
                     <p className="text-xs text-paybancx-text-muted font-semibold uppercase">Account Number</p>
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-base font-bold text-paybancx-action tracking-wider">
+                      <p
+                        className="text-base font-bold text-paybancx-action tracking-wider select-all cursor-pointer"
+                        onClick={() => handleCopyToClipboard(String(virtualAccount.accountNumber || ''), 'accountNumber')}
+                        title="Click to copy account number"
+                      >
                         {virtualAccount.accountNumber || 'N/A'}
                       </p>
                       <button
-                        onClick={() => handleCopyToClipboard(virtualAccount.accountNumber || '', 'accountNumber')}
-                        className="p-0.5 hover:bg-paybancx-bg rounded transition-all"
-                        title="Copy"
+                        type="button"
+                        onClick={() => handleCopyToClipboard(String(virtualAccount.accountNumber || ''), 'accountNumber')}
+                        className="flex h-8 shrink-0 items-center justify-center gap-1 rounded-md border border-paybancx-action bg-paybancx-action px-2 text-xs font-semibold text-white shadow-sm hover:opacity-90 transition-all"
+                        title="Copy account number"
+                        aria-label="Copy account number"
                       >
                         {copiedField === 'accountNumber' ? (
-                          <MdCheckCircle className="text-green-500" size={14} />
+                          <>
+                            <MdCheckCircle className="text-white" size={16} />
+                            <span>Copied</span>
+                          </>
                         ) : (
-                          <MdContentCopy className="text-paybancx-text-muted" size={14} />
+                          <>
+                            <MdContentCopy className="text-white" size={16} />
+                            <span>Copy</span>
+                          </>
                         )}
                       </button>
                     </div>

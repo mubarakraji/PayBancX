@@ -12,17 +12,14 @@ export default function DashboardLayout({
   return (
     <ProtectedRoute>
       <MobileMenu />
-      <div className="flex h-screen bg-[#F5F6F8] overflow-hidden">
-        {/* Sidebar - Hidden on mobile/tablet (sm, md), shown on laptop (lg and up) */}
+      <div className="flex h-screen overflow-hidden bg-[#F5F6F8]">
         <div className="hidden lg:flex flex-col">
           <Sidebar />
         </div>
 
-        {/* Main Content Container */}
-        <div className="flex-1 flex flex-col overflow-auto w-full">
-          {/* Page Content - Fully responsive with max-width for desktop */}
-          <main className="flex-1 overflow-auto w-full bg-[#F5F6F8]">
-            <div className="h-full">
+        <div className="flex-1 flex min-w-0 flex-col overflow-x-hidden overflow-y-auto">
+          <main className="flex-1 w-full bg-[#F5F6F8]">
+            <div className="min-h-full">
               {children}
             </div>
           </main>

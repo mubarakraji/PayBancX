@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthToken } from '@/config/apiConfig';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://pb-production-fd26.up.railway.app/api/v1';
 
 export async function POST(request: NextRequest) {
   try {
-    const token = getAuthToken();
-    if (!token) {
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },
         { status: 401 }
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        'Authorization': authHeader,
       },
     });
 

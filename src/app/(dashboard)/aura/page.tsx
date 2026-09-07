@@ -20,21 +20,14 @@ export default function AuraPage() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
-    console.log('[AURA Page] Sending message:', userMessage.substring(0, 50) + '...');
-
     const newUserMessage: Message = {
       id: messages.length + 1,
       text: userMessage,
@@ -47,14 +40,7 @@ export default function AuraPage() {
     setIsLoading(true);
 
     try {
-      console.log('[AURA Page] Calling AURA service...');
       const response = await sendAuraMessage(userMessage);
-
-      console.log('[AURA Page] AURA response received:', {
-        success: response.success,
-        hasResponse: !!response.response,
-        messageLength: response.response?.length,
-      });
 
       if (response.success) {
         const auraMessage: Message = {
@@ -64,19 +50,15 @@ export default function AuraPage() {
           timestamp: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, auraMessage]);
-        console.log('[AURA Page] AURA message added to chat');
       } else {
         throw new Error(response.message || 'Failed to get response');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
-      console.error('[AURA Page] Send error:', err);
       toastError(errorMessage);
-
-      // Add error message to chat
       const errorMsg: Message = {
         id: messages.length + 2,
-        text: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
+        text: `Sorry, I ran into an issue: ${errorMessage}. Please try again.`,
         sender: 'aura',
         timestamp: new Date().toISOString(),
       };
@@ -91,74 +73,55 @@ export default function AuraPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-paybancx-bg">
-      {/* Header */}
-      <header className="flex justify-between items-center px-3 xs:px-4 sm:px-5 md:px-6 py-3 border-b border-paybancx-border bg-white sticky top-0 z-10">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-card bg-paybancx-action/15 flex items-center justify-center">
-            <MdMessage className="text-paybancx-action text-sm" />
+    <div className="flex h-screen flex-col bg-[#F5F6F8] text-[#122927]">
+      <header className="sticky top-0 z-10 border-b border-[#E5E7EB] bg-white px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#1C3F3B]/10 text-[#1C3F3B]">
+              <MdMessage className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-[#122927]">AURA-X</h2>
+              <p className="text-sm text-[#64748B]">Assistant for your wallet and payments</p>
+            </div>
           </div>
-          <h2 className="text-base font-semibold text-paybancx-text-dark tracking-wide">AURA-X</h2>
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={handleClearChat}
-            title="Clear chat"
-            className="p-1 hover:bg-paybancx-primary/5 rounded-card transition-all duration-300 hover:scale-[1.02]"
-          >
-            <MdDeleteOutline className="w-4 h-4 text-paybancx-text-muted" />
-          </button>
-          <button
-            onClick={() => router.back()}
-            title="Close"
-            className="p-1 hover:bg-paybancx-primary/5 rounded-lg transition-all duration-300 hover:scale-[1.02]"
-          >
-            <MdClose className="w-4 h-4 text-paybancx-text-muted" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={handleClearChat} title="Clear chat" className="rounded-full p-2 text-[#64748B] transition hover:bg-[#F8FAFA] hover:text-[#122927]">
+              <MdDeleteOutline className="h-5 w-5" />
+            </button>
+            <button onClick={() => router.back()} title="Close" className="rounded-full p-2 text-[#64748B] transition hover:bg-[#F8FAFA] hover:text-[#122927]">
+              <MdClose className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Main Chat Area */}
-      <main className="flex-1 overflow-y-auto bg-paybancx-bg">
+      <main className="flex-1 overflow-y-auto bg-[#F8FAFA]">
         {messages.length === 0 ? (
-          // Welcome Section
-          <div className="flex flex-col items-center justify-center h-full px-3 xs:px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-paybancx-action/10 flex items-center justify-center mb-4">
-              <MdMessage className="w-8 h-8 text-paybancx-action opacity-60" />
+          <div className="flex h-full flex-col items-center justify-center px-4 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#1C3F3B]/10 text-[#1C3F3B]">
+              <MdMessage className="h-8 w-8" />
             </div>
-            <h1 className="text-lg md:text-2xl font-semibold text-paybancx-text-dark mb-3">AURA-X</h1>
-            <p className="text-paybancx-text-muted text-sm leading-snug max-w-sm">
-              Start a conversation with AURA-X. Ask about your account balance, transactions, or any questions about your wallet.
-            </p>
+            <h1 className="mb-2 text-xl font-semibold text-[#122927]">AURA-X</h1>
+            <p className="max-w-sm text-sm leading-relaxed text-[#64748B]">Ask about your balance, transactions, or anything else related to your wallet.</p>
           </div>
         ) : (
-          // Messages Container
-          <div className="p-3 md:p-4 space-y-3">
+          <div className="space-y-3 p-3 md:p-4">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-xs md:max-w-md px-3 py-2 rounded-3xl ${
-                    msg.sender === 'user'
-                      ? 'bg-paybancx-action text-white rounded-tr-none font-medium'
-                      : 'bg-white border border-paybancx-border text-paybancx-text-dark rounded-tl-none'
-                  }`}
-                >
-                  <p className="text-sm leading-snug">{msg.text}</p>
-                  {msg.timestamp && (
-                    <p className={`text-xs mt-1.5 ${msg.sender === 'user' ? 'text-white/60' : 'text-paybancx-text-muted'}`}>
-                      {new Date(msg.timestamp).toLocaleTimeString()}
-                    </p>
-                  )}
+                <div className={`max-w-xs rounded-3xl px-4 py-3 md:max-w-md ${msg.sender === 'user' ? 'rounded-tr-none bg-[#1C3F3B] text-white' : 'rounded-tl-none border border-[#E5E7EB] bg-white text-[#122927]'}`}>
+                  <p className="text-sm leading-relaxed">{msg.text}</p>
+                  {msg.timestamp && <p className={`mt-1.5 text-xs ${msg.sender === 'user' ? 'text-white/70' : 'text-[#64748B]'}`}>{new Date(msg.timestamp).toLocaleTimeString()}</p>}
                 </div>
               </div>
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white border border-paybancx-border text-paybancx-text-dark rounded-3xl rounded-tl-none px-4 py-3">
+                <div className="rounded-3xl rounded-tl-none border border-[#E5E7EB] bg-white px-4 py-3">
                   <div className="flex gap-2">
-                    <div className="w-2 h-2 rounded-full bg-paybancx-action animate-pulse"></div>
-                    <div className="w-2 h-2 rounded-full bg-paybancx-action animate-pulse"></div>
-                    <div className="w-2 h-2 rounded-full bg-paybancx-action animate-pulse"></div>
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-[#1C3F3B]" />
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-[#1C3F3B]" />
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-[#1C3F3B]" />
                   </div>
                 </div>
               </div>
@@ -168,29 +131,28 @@ export default function AuraPage() {
         )}
       </main>
 
-      {/* Input Footer */}
-      <footer className="px-4 xs:px-5 sm:px-6 py-5 bg-white border-t border-paybancx-border">
+      <footer className="border-t border-[#E5E7EB] bg-white px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex-1 flex items-center bg-white border border-paybancx-border rounded-full px-5 py-3 focus-within:border-[#1C3F3B] focus-within:ring-1 focus-within:ring-[#1C3F3B]/30 transition-all">
+          <div className="flex flex-1 items-center rounded-full border border-[#E5E7EB] bg-[#F8FAFA] px-4 py-3 transition focus-within:border-[#1C3F3B] focus-within:ring-1 focus-within:ring-[#1C3F3B]/20">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSend()}
+              onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
               placeholder="Ask AURA-X anything..."
               disabled={isLoading}
-              className="flex-1 bg-transparent text-paybancx-text-dark placeholder-paybancx-text-muted focus:outline-none text-sm md:text-base disabled:opacity-50"
+              className="flex-1 bg-transparent text-sm text-[#122927] placeholder:text-[#94A3B8] focus:outline-none disabled:opacity-50"
               aria-label="Message input for AURA-X"
             />
           </div>
           <button
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-[#1C3F3B] text-white rounded-full hover:bg-[#1F4440] transition-all duration-300 hover:scale-[1.05] disabled:bg-[#D0D0D0] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-md"
+            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#1C3F3B] text-white shadow-sm transition hover:bg-[#173533] disabled:cursor-not-allowed disabled:bg-[#CBD5E1]"
             title={isLoading ? 'Waiting for response...' : 'Send message'}
             aria-label="Send message"
           >
-            <MdSend className="w-5 h-5" />
+            <MdSend className="h-5 w-5" />
           </button>
         </div>
       </footer>

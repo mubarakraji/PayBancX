@@ -40,6 +40,26 @@ export default function TransactionsPage() {
     }
   }, [isAuthenticated, page]);
 
+  const serializeError = (value: unknown): string => {
+    if (value instanceof Error) {
+      return value.message || 'Failed to load transactions';
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    try {
+      return JSON.stringify(value, (_, item) => typeof item === 'bigint' ? item.toString() : item) || 'Failed to load transactions';
+    } catch {
+      try {
+        return String(value) || 'Failed to load transactions';
+      } catch {
+        return 'Failed to load transactions';
+      }
+    }
+  };
+
   const fetchTransactions = async () => {
     setIsLoading(true);
     try {
@@ -61,8 +81,7 @@ export default function TransactionsPage() {
       setTransactions(normalizedTransactions);
       console.log('[Transactions Page] Transactions loaded successfully:', normalizedTransactions.length);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load transactions';
-      const safeErrorMsg = typeof errorMessage === 'string' ? errorMessage : 'Failed to load transactions';
+      const safeErrorMsg = serializeError(err);
       console.error('[Transactions Page] Transaction fetch error:', safeErrorMsg);
       toastError(safeErrorMsg);
     } finally {
@@ -125,55 +144,49 @@ export default function TransactionsPage() {
 
   const getNetworkLogo = (network: string) => {
     const networks: Record<string, { image: string; name: string }> = {
-      'mtn': { image: '/m1.png', name: 'MTN' },
-      'airtel': { image: '/m2.png', name: 'Airtel' },
-      'glo': { image: '/m3.png', name: 'Glo' },
-      '9mobile': { image: '/m4.png', name: '9Mobile' },
+      'mtn': { image: '/s1.png', name: 'MTN' },
+      'airtel': { image: '/s2.png', name: 'Airtel' },
+      'glo': { image: '/s3.png', name: 'Glo' },
+      '9mobile': { image: '/s4.png', name: '9Mobile' },
     };
-    
+
     const normalized = network?.toLowerCase() || '';
-    return networks[normalized] || { image: '/m1.png', name: network || 'Network' };
+    return networks[normalized] || { image: '/s1.png', name: network || 'Network' };
   };
 
   const getTransactionIcon = (type: string, description: string = '', index: number = 0) => {
-    // Check if it's an airtime purchase
     const isAirtime = description.toLowerCase().includes('airtime');
-    
+
     if (isAirtime) {
-      // Try to extract network from description
       const networks = ['mtn', 'airtel', 'glo', '9mobile'];
-      let foundNetwork = networks.find(net => description.toLowerCase().includes(net));
-      
-      // If network not in description, cycle through networks based on index
+      let foundNetwork = networks.find((net) => description.toLowerCase().includes(net));
+
       if (!foundNetwork) {
         const networkOrder = ['mtn', 'airtel', 'glo', '9mobile'];
         foundNetwork = networkOrder[index % networkOrder.length];
       }
-      
+
       if (foundNetwork) {
         const logo = getNetworkLogo(foundNetwork);
-        try {
-          return (
-            <Image
-              src={logo.image}
-              alt={logo.name}
-              width={40}
-              height={40}
-              className="w-5 h-5 object-contain"
-              priority={false}
-            />
-          );
-        } catch (err) {
-          console.error('Image load error:', err);
-          return <MdArrowUpward className="w-5 h-5 text-red-600" />;
-        }
+
+        return (
+          <Image
+            src={logo.image}
+            alt={logo.name}
+            width={30}
+            height={30}
+            className="h-7 w-7 object-contain sm:h-8 sm:w-8"
+            priority={false}
+            unoptimized
+          />
+        );
       }
     }
 
     return type === 'received' ? (
-      <MdArrowDownward className="w-5 h-5 text-green-600" />
+      <MdArrowDownward className="h-5 w-5 text-green-600" />
     ) : (
-      <MdArrowUpward className="w-5 h-5 text-red-600" />
+      <MdArrowUpward className="h-5 w-5 text-red-600" />
     );
   };
 
@@ -182,29 +195,26 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8] pb-16 md:pb-6">
-      {/* Page Header */}
-      <div className="bg-white border-b border-[#2D5D59]/10">
-        <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-2 xs:py-3 sm:py-4 md:py-4">
-          <div className="flex items-center justify-between mb-1">
-            <button
-              onClick={() => router.back()}
-              className="p-1.5 hover:bg-[#2D5D59]/5 rounded-lg transition-all duration-300 hover:scale-[1.05] flex-shrink-0 mr-2 xs:mr-3"
-              title="Go back"
-            >
-              <MdArrowBack className="w-4 h-4 xs:w-5 xs:h-5 text-[#2D5D59]" />
-            </button>
-            <h1 className="text-lg xs:text-xl sm:text-2xl md:text-3xl font-bold text-[#333333] font-[family-name:Syne]">Transactions</h1>
-            <div className="w-6 xs:w-8 flex-shrink-0"></div>
+    <div className="min-h-screen bg-[#F5F6F8] pb-16 text-[#122927] md:pb-6">
+      <div className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+          <button
+            onClick={() => router.back()}
+            title="Go back"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+          >
+            <MdArrowBack size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Transactions</h1>
+            <p className="text-sm text-[#64748B]">View and manage all your transactions</p>
           </div>
-          <p className="text-[#888888] text-[10px] xs:text-xs sm:text-sm pl-10 xs:pl-12">View and manage all your transactions</p>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 xs:py-4 md:py-5">
-        {/* Search and Filters Section */}
-        <div className="bg-white rounded-xl border border-[#2D5D59]/10 p-3 xs:p-4 md:p-5 mb-4 xs:mb-6 shadow-sm">
+      <div className="mx-auto max-w-6xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
+        <div className="mb-4 rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm xs:mb-6 sm:p-5">
           {/* Search Bar */}
           <div className="mb-4 xs:mb-5">
             <label className="block text-[10px] xs:text-xs sm:text-sm font-semibold text-[#333333] mb-1.5 xs:mb-2">Search Transactions</label>
@@ -296,17 +306,13 @@ export default function TransactionsPage() {
             {filteredTransactions.map((transaction, index) => (
               <div
                 key={transaction.id}
-                className="bg-white border border-[#2D5D59]/10 rounded-lg p-3 xs:p-4 md:p-5 lg:p-6 hover:border-[#2D5D59]/30 hover:shadow-md transition-all duration-300 hover:scale-[1.01]"
+                className="rounded-2xl border border-[#E5E7EB] bg-white p-3 shadow-sm transition-all duration-200 hover:border-[#1C3F3B]/30 hover:shadow-md xs:p-4 md:p-5 lg:p-6"
               >
                 {/* Mobile Layout */}
                 <div className="md:hidden">
                   <div className="flex items-start justify-between gap-2 xs:gap-3">
                     <div className="flex items-center gap-2 xs:gap-3 flex-1 min-w-0">
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          transaction.type === 'received' ? 'bg-[#22C55E]/10' : 'bg-red-500/10'
-                        }`}
-                      >
+                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-transparent">
                         {getTransactionIcon(transaction.type, transaction.description, index)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -332,11 +338,7 @@ export default function TransactionsPage() {
                 {/* Desktop Layout */}
                 <div className="hidden md:grid grid-cols-12 gap-4 items-center">
                   <div className="col-span-1">
-                    <div
-                      className={`w-10 h-10 rounded-card flex items-center justify-center ${
-                        transaction.type === 'received' ? 'bg-paybancx-success/10' : 'bg-red-500/10'
-                      }`}
-                    >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-transparent">
                       {getTransactionIcon(transaction.type, transaction.description, index)}
                     </div>
                   </div>

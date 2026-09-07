@@ -25,12 +25,27 @@ export function GetQRModal({ isOpen, onClose }: GetQRModalProps) {
   // QR code image URL using API (no dependencies needed)
   const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrValue)}`;
 
+  const releaseCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const stopScanning = () => {
+    releaseCamera();
+    setIsScanning(false);
+  };
+
   // Handle body overflow on open/close
   useEffect(() => {
     if (!isOpen) {
       document.body.style.overflow = 'unset';
+      releaseCamera();
       if (isScanning) {
-        stopScanning();
+        const frame = window.requestAnimationFrame(() => setIsScanning(false));
+        return () => window.cancelAnimationFrame(frame);
       }
       return;
     }
@@ -79,16 +94,6 @@ export function GetQRModal({ isOpen, onClose }: GetQRModalProps) {
       setIsScanning(false);
       console.error('Camera error:', error);
     }
-  };
-
-  // Stop camera
-  const stopScanning = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach((track) => track.stop());
-      videoRef.current.srcObject = null;
-    }
-    setIsScanning(false);
   };
 
   // Download QR code

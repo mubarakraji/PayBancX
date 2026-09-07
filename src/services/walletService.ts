@@ -1,5 +1,5 @@
 // Wallet Service - Balance, Transactions, Deposits, Transfers
-import { API_ENDPOINTS, buildApiUrl, getAuthHeaders } from '@/config/apiConfig';
+import { API_ENDPOINTS, buildApiUrl, getAuthHeaders, authenticatedFetch } from '@/config/apiConfig';
 
 export interface WalletBalance {
   balance: number;
@@ -67,22 +67,44 @@ function transformBigIntToString(obj: any): any {
 function safeStringify(obj: any): string {
   try {
     const transformed = transformBigIntToString(obj);
-    return typeof transformed === 'string' ? transformed : JSON.stringify(transformed);
+    if (typeof transformed === 'string') return transformed;
+    return JSON.stringify(transformed, (_, value) => {
+      if (typeof value === 'bigint') return value.toString();
+      return value;
+    });
   } catch (e) {
-    return String(obj);
+    try {
+      const fallback = transformBigIntToString(obj);
+      return String(fallback ?? '[Unserializable value]');
+    } catch {
+      return '[Unserializable value]';
+    }
+  }
+}
+
+function safeErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message || 'Unknown error';
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  try {
+    return safeStringify(error).substring(0, 500) || 'Unknown error';
+  } catch {
+    return 'Unknown error';
   }
 }
 
 // Get Wallet Balance
 export async function getWalletBalance(): Promise<WalletBalance> {
   try {
-    const headers = getAuthHeaders();
-    
     console.log('[Wallet] Fetching balance...');
 
-    const response = await fetch('/api/v1/wallet/balance', {
+    const response = await authenticatedFetch('/api/v1/wallet/balance', {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -124,9 +146,8 @@ export async function getWalletBalance(): Promise<WalletBalance> {
 // Get Virtual Account Details
 export async function getVirtualAccount(): Promise<VirtualAccount> {
   try {
-    const response = await fetch('/api/v1/wallet/virtual-account', {
+    const response = await authenticatedFetch('/api/v1/wallet/virtual-account', {
       method: 'GET',
-      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -150,7 +171,14 @@ export async function getVirtualAccount(): Promise<VirtualAccount> {
       throw new Error('' + errorMsg);
     }
 
-    return transformedData?.data || transformedData;
+    const account = transformedData?.data || transformedData;
+
+    return {
+      accountNumber: String(account?.accountNumber || account?.account_number || ''),
+      accountName: String(account?.accountName || account?.account_name || ''),
+      bankName: String(account?.bankName || account?.bank_name || ''),
+      bankCode: String(account?.bankCode || account?.bank_code || ''),
+    };
   } catch (error) {
     console.error('Get virtual account error:', error);
     throw error;
@@ -160,9 +188,8 @@ export async function getVirtualAccount(): Promise<VirtualAccount> {
 // Initiate Deposit
 export async function initiateDeposit(amount: number): Promise<DepositInitiateResponse> {
   try {
-    const response = await fetch('/api/v1/wallet/deposit/initiate', {
+    const response = await authenticatedFetch('/api/v1/wallet/deposit/initiate', {
       method: 'POST',
-      headers: getAuthHeaders(),
       body: JSON.stringify({ amount }),
     });
 
@@ -195,9 +222,8 @@ export async function initiateDeposit(amount: number): Promise<DepositInitiateRe
 // Verify Deposit
 export async function verifyDeposit(reference: string): Promise<WalletResponse> {
   try {
-    const response = await fetch(`/api/v1/wallet/deposit/verify/${reference}`, {
+    const response = await authenticatedFetch(`/api/v1/wallet/deposit/verify/${reference}`, {
       method: 'GET',
-      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -218,9 +244,8 @@ export async function verifyDeposit(reference: string): Promise<WalletResponse> 
 // Withdraw Funds
 export async function withdrawFunds(amount: number, bankCode: string, accountNumber: string, pin: string): Promise<WalletResponse> {
   try {
-    const response = await fetch('/api/v1/wallet/withdraw', {
+    const response = await authenticatedFetch('/api/v1/wallet/withdraw', {
       method: 'POST',
-      headers: getAuthHeaders(),
       body: JSON.stringify({ amount, bankCode, accountNumber, pin }),
     });
 
@@ -242,9 +267,8 @@ export async function withdrawFunds(amount: number, bankCode: string, accountNum
 // Transfer to Another User
 export async function transferFunds(amount: number, recipientIdentifier: string, narration: string, pin: string): Promise<WalletResponse> {
   try {
-    const response = await fetch('/api/v1/wallet/transfer', {
+    const response = await authenticatedFetch('/api/v1/wallet/transfer', {
       method: 'POST',
-      headers: getAuthHeaders(),
       body: JSON.stringify({ amount, recipient: recipientIdentifier, narration, pin }),
     });
 
@@ -279,13 +303,12 @@ export async function getTransactionHistory(
     if (type) params.append('type', type);
     if (status) params.append('status', status);
 
-    const url = `/api/v1/wallet/transactions?${params.toString()}`;
+    const url = `/api/wallet/transactions?${params.toString()}`;
     
     console.log('[Wallet] Fetching transactions from:', url);
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -324,10 +347,10 @@ export async function getTransactionHistory(
       throw new Error(safeErrorMsg);
     }
 
-    // Get transactions from the nested data structure
-    const transactions = transformedData?.data?.transactions || [];
-    const total = transformedData?.data?.total || 0;
-    const currentPage = transformedData?.data?.pagination?.page || page;
+    const transactionData = transformedData?.data || transformedData;
+    const transactions = transactionData?.transactions || [];
+    const total = transactionData?.total || 0;
+    const currentPage = transactionData?.pagination?.page || page;
 
     console.log('[Wallet] Transactions received:', {
       count: transactions.length,
@@ -342,8 +365,7 @@ export async function getTransactionHistory(
       page: currentPage,
     };
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-    const safeErrorMsg = typeof errorMsg === 'string' ? errorMsg : 'Unknown error';
+    const safeErrorMsg = safeErrorMessage(error);
     console.error('[Wallet] Get transactions error:', safeErrorMsg);
     throw new Error(safeErrorMsg);
   }
@@ -352,9 +374,8 @@ export async function getTransactionHistory(
 // Get Single Transaction Details
 export async function getTransactionDetail(transactionId: string): Promise<Transaction> {
   try {
-    const response = await fetch(buildApiUrl(`${API_ENDPOINTS.WALLET.TRANSACTION_DETAIL}/${transactionId}`), {
+    const response = await authenticatedFetch(buildApiUrl(`${API_ENDPOINTS.WALLET.TRANSACTION_DETAIL}/${transactionId}`), {
       method: 'GET',
-      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -377,9 +398,8 @@ export async function getTransactionDetail(transactionId: string): Promise<Trans
 // Stream Wallet Events (WebSocket or polling)
 export async function getWalletStream(): Promise<WalletResponse> {
   try {
-    const response = await fetch(buildApiUrl(API_ENDPOINTS.WALLET.STREAM), {
+    const response = await authenticatedFetch(buildApiUrl(API_ENDPOINTS.WALLET.STREAM), {
       method: 'GET',
-      headers: getAuthHeaders(),
     });
 
     const data = await response.json();
@@ -398,12 +418,8 @@ export async function getWalletStream(): Promise<WalletResponse> {
 // Check KYC Verification Status
 export async function checkKYCStatus(): Promise<{ verified: boolean; message?: string }> {
   try {
-    const token = localStorage.getItem('authToken');
-    const response = await fetch('/api/v1/auth/kyc-status', {
+    const response = await authenticatedFetch('/api/v1/auth/kyc-status', {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
     });
 
     const data = await response.json();

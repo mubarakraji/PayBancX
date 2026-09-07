@@ -176,7 +176,7 @@ function ResetPasswordContent() {
               Create a new<br />password
             </h2>
             <p className="text-[#9fd4cf] text-xs leading-relaxed max-w-[220px]">
-              Make sure it's strong and unique to keep your account safe and secure.
+              Make sure it&apos;s strong and unique to keep your account safe and secure.
             </p>
 
             <div className="flex flex-col gap-2 mt-5">

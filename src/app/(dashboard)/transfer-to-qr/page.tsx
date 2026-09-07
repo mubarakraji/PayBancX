@@ -240,30 +240,30 @@ export default function TransferToQRPage() {
   };
 
   return (
-    <div className="min-h-screen bg-paybancx-bg pb-20 md:pb-6">
-      {/* Header */}
-      <div className="bg-white border-b border-paybancx-border sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                stopScanning();
-                router.back();
-              }}
-              className="p-2 hover:bg-paybancx-primary/5 rounded-card transition-all duration-300 hover:scale-[1.02]"
-              title="Go back"
-              aria-label="Go back"
-            >
-              <MdArrowBack size={20} className="text-paybancx-action" />
-            </button>
-            <h1 className="text-lg xs:text-xl sm:text-2xl font-bold text-paybancx-text-dark">QR Payment</h1>
+    <div className="min-h-screen bg-[#F5F6F8] pb-20 text-[#122927] md:pb-6">
+      <div className="sticky top-0 z-10 border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+          <button
+            onClick={() => {
+              stopScanning();
+              router.back();
+            }}
+            title="Go back"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+          >
+            <MdArrowBack size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">QR Payment</h1>
+            <p className="text-sm text-[#64748B]">Scan a QR code or enter a payment tag</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-3 xs:px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-4 md:py-5">
+      <div className="mx-auto max-w-4xl px-3 py-4 xs:px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 md:py-5">
         {/* Tab Switcher */}
-        <div className="flex gap-3 mb-8">
+        <div className="mb-8 flex gap-3 rounded-2xl border border-[#E5E7EB] bg-white p-1.5 shadow-sm">
           <button
             onClick={() => {
               setActiveTab('qr');
@@ -421,7 +421,7 @@ export default function TransferToQRPage() {
                 Enter Payment Tag
               </h2>
               <p className="text-paybancx-text-muted text-xs xs:text-sm sm:text-base md:text-sm">
-                Enter the recipient's payment tag or account identifier
+                Enter the recipient&apos;s payment tag or account identifier
               </p>
             </div>
 

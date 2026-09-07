@@ -12,6 +12,8 @@ export interface ShowToastOptions {
   };
 }
 
+const getToastId = (type: ToastType, message: string) => `${type}:${message.trim()}`;
+
 export const useToast = () => {
   const showToast = useCallback(
     (
@@ -20,6 +22,7 @@ export const useToast = () => {
       options?: ShowToastOptions
     ) => {
       const toastOptions = {
+        id: getToastId(type, message),
         description: options?.description,
         duration: options?.duration || 4000,
         action: options?.action,
@@ -57,6 +60,7 @@ export const showToast = (
   options?: ShowToastOptions
 ) => {
   const toastOptions = {
+    id: getToastId(type, message),
     description: options?.description,
     duration: options?.duration || 4000,
     action: options?.action,

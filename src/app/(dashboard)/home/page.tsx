@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   MdQrCode2,
   MdPhone,
@@ -24,7 +24,7 @@ import { DepositModal } from '@/components/common/DepositModal';
 import { Header } from '@/components/common/Header';
 import { getWalletBalance, getTransactionHistory } from '@/services/walletService';
 import { useAuth } from '@/hooks/useAuth';
-import { toastError, toastSuccess } from '@/hooks/useToast';
+import { toastError } from '@/hooks/useToast';
 import { normalizeAmount } from '@/utils/helpers';
 
 interface Transaction {
@@ -45,7 +45,7 @@ export default function HomePage() {
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
-  const pathname = usePathname();
+  const [activePromoIndex, setActivePromoIndex] = useState(0);
   const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
@@ -54,6 +54,20 @@ export default function HomePage() {
       fetchRecentTransactions();
     }
   }, [isAuthenticated, authLoading]);
+
+  useEffect(() => {
+    const promoImages = [
+      'https://app.yangaplug.com/storage/banners/1864763958693092.png',
+      'https://app.yangaplug.com/storage/banners/1864764005801572.png',
+      'https://app.yangaplug.com/storage/banners/1864764034449434.jpeg',
+    ];
+
+    const interval = window.setInterval(() => {
+      setActivePromoIndex((prev) => (prev + 1) % promoImages.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   const fetchBalance = async () => {
     setIsLoadingBalance(true);
@@ -108,57 +122,51 @@ export default function HomePage() {
 
   const getNetworkLogo = (network: string) => {
     const networks: Record<string, { image: string; name: string }> = {
-      'mtn': { image: '/m1.png', name: 'MTN' },
-      'airtel': { image: '/m2.png', name: 'Airtel' },
-      'glo': { image: '/m3.png', name: 'Glo' },
-      '9mobile': { image: '/m4.png', name: '9Mobile' },
+      'mtn': { image: '/s1.png', name: 'MTN' },
+      'airtel': { image: '/s2.png', name: 'Airtel' },
+      'glo': { image: '/s3.png', name: 'Glo' },
+      '9mobile': { image: '/s4.png', name: '9Mobile' },
     };
-    
+
     const normalized = network?.toLowerCase() || '';
-    return networks[normalized] || { image: '/m1.png', name: network || 'Network' };
+    return networks[normalized] || { image: '/s1.png', name: network || 'Network' };
   };
 
   const getTransactionIcon = (type: string, description: string = '', index: number = 0) => {
-    // Check if it's an airtime purchase
     const isAirtime = description.toLowerCase().includes('airtime');
-    
+
     if (isAirtime) {
-      // Try to extract network from description
       const networks = ['mtn', 'airtel', 'glo', '9mobile'];
-      let foundNetwork = networks.find(net => description.toLowerCase().includes(net));
-      
-      // If network not in description, cycle through networks based on index
+      let foundNetwork = networks.find((net) => description.toLowerCase().includes(net));
+
       if (!foundNetwork) {
         const networkOrder = ['mtn', 'airtel', 'glo', '9mobile'];
         foundNetwork = networkOrder[index % networkOrder.length];
       }
-      
+
       if (foundNetwork) {
         const logo = getNetworkLogo(foundNetwork);
-        try {
-          return (
-            <Image
-              src={logo.image}
-              alt={logo.name}
-              width={32}
-              height={32}
-              className="w-4 h-4 object-contain"
-              priority={false}
-            />
-          );
-        } catch (err) {
-          console.error('Image load error:', err);
-          return <MdArrowUpward className="w-4 h-4 text-red-600" />;
-        }
+
+        return (
+          <Image
+            src={logo.image}
+            alt={logo.name}
+            width={28}
+            height={28}
+            className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+            priority={false}
+            unoptimized
+          />
+        );
       }
     }
 
     const typeStr = String(type).toLowerCase();
     const isIncoming = typeStr.includes('received') || typeStr.includes('deposit') || typeStr.includes('incoming');
     return isIncoming ? (
-      <MdArrowDownward className="w-4 h-4 text-green-600" />
+      <MdArrowDownward className="h-4 w-4 text-green-600" />
     ) : (
-      <MdArrowUpward className="w-4 h-4 text-red-600" />
+      <MdArrowUpward className="h-4 w-4 text-red-600" />
     );
   };
 
@@ -170,88 +178,133 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8]">
-      {/* Header */}
+    <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
       <Header />
-      
-      <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 xs:py-4 sm:py-5 md:py-6">
-        {/* 12-Column Grid Layout for Desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 xs:gap-3.5 sm:gap-4 md:gap-5">
-          {/* Left Column: 8 columns - Wallet & Services */}
-          <div className="lg:col-span-8 space-y-3 xs:space-y-3.5 sm:space-y-4 md:space-y-5">
-            {/* Wallet Balance Card */}
-            <div className="space-y-3">
-              <BalanceCard balance={balance} />
-              {/* Deposit Button under Balance */}
+
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-3 sm:px-5 sm:py-4 lg:px-6 lg:py-6">
+        <div className="flex items-start justify-between gap-3 rounded-2xl border border-[#1C3F3B]/10 bg-white/80 px-3 py-3 shadow-sm backdrop-blur sm:px-4">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#1C3F3B]/70">Good day</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#122927] sm:text-xl">Welcome back</h2>
+            <p className="mt-1 text-sm text-[#5f6b6a]">Everything you need to pay, transfer, and stay on top of bills.</p>
+          </div>
+          <div className="rounded-full border border-[#1C3F3B]/10 bg-[#1C3F3B]/5 px-3 py-1.5 text-[11px] font-semibold text-[#1C3F3B]">
+            Secure • Fast
+          </div>
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-4">
+            <BalanceCard balance={balance} />
+
+            <div className="grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
               <button
                 onClick={() => setIsDepositOpen(true)}
-                className="w-full bg-gradient-to-r from-[#22C55E] to-[#16A34A] text-white py-2.5 px-4 rounded-lg font-semibold text-xs xs:text-sm flex items-center justify-center gap-2 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-md"
+                className="flex items-center justify-between rounded-2xl border border-[#22C55E]/20 bg-gradient-to-r from-[#22C55E] to-[#16A34A] p-4 text-left text-white shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-md"
                 title="Add funds to your wallet"
               >
-                <MdAdd size={18} />
-                <span>Add Funds</span>
+                <div>
+                  <p className="text-sm font-semibold">Add funds</p>
+                  <p className="mt-1 text-xs text-white/80">Top up your wallet instantly</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+                  <MdAdd size={20} />
+                </div>
+              </button>
+
+              <button
+                onClick={() => setIsTransferOpen(true)}
+                className="flex items-center justify-between rounded-2xl border border-[#1C3F3B]/10 bg-white p-4 text-left shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-md"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-[#122927]">Transfer money</p>
+                  <p className="mt-1 text-xs text-[#5f6b6a]">Send to anyone securely</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1C3F3B]/5 text-[#1C3F3B]">
+                  <MdRemove size={20} />
+                </div>
               </button>
             </div>
 
-            {/* Quick Services Grid */}
-            <div className="bg-white rounded-lg shadow-sm p-3 xs:p-3.5 md:p-4 border border-[#1C3F3B]/10">
-              <h3 className="text-sm xs:text-base sm:text-lg font-bold text-[#333333] mb-2.5 xs:mb-3 font-[family-name:Syne]">Quick Services</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2">
+            <div className="rounded-2xl border border-[#1C3F3B]/10 bg-white p-3 shadow-sm sm:p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-base font-semibold text-[#122927]">Quick services</h3>
+                <span className="text-xs font-medium text-[#1C3F3B]/70">Pay in seconds</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {quickActions.map((action, idx) => (
                   <Link
                     key={idx}
                     href={action.route}
-                    className="flex flex-col items-center gap-1.5 p-2.5 rounded-lg bg-white border-2 border-[#1C3F3B]/15 hover:border-[#1C3F3B]/40 hover:shadow-md transition-all duration-300 hover:scale-[1.03] group"
+                    className="flex flex-col items-center gap-2 rounded-xl border border-[#1C3F3B]/10 bg-[#F8FAFA] p-3 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1C3F3B]/30 hover:bg-white hover:shadow-sm"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#1C3F3B]/10 flex items-center justify-center group-hover:bg-[#1C3F3B]/20 transition-all">
-                      <action.icon size={16} className="text-[#1C3F3B]" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1C3F3B]/10 text-[#1C3F3B]">
+                      <action.icon size={16} />
                     </div>
-                    <p className="text-[10px] xs:text-xs font-semibold text-[#333333] text-center">{action.label}</p>
+                    <p className="text-[11px] font-semibold text-[#333333]">{action.label}</p>
                   </Link>
                 ))}
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="grid grid-cols-1 gap-2">
-              <button
-                onClick={() => setIsTransferOpen(true)}
-                className="bg-white border-2 border-[#1C3F3B] text-[#1C3F3B] py-2 px-4 rounded-lg font-semibold text-xs xs:text-sm flex items-center justify-center gap-2 hover:bg-[#1C3F3B]/5 transition-all duration-300 hover:scale-[1.01] active:scale-95"
-              >
-                <MdRemove size={18} />
-                <span>Transfer Money</span>
-              </button>
+            <div className="relative overflow-hidden rounded-2xl border border-[#1C3F3B]/10 bg-white p-2 shadow-sm sm:p-3">
+              <div className="relative w-full" role="region" aria-roledescription="carousel">
+                <div className="overflow-hidden rounded-xl">
+                  <div
+                    className={`flex transition-transform duration-500 ease-in-out ${activePromoIndex === 0 ? '-translate-x-0' : activePromoIndex === 1 ? '-translate-x-full' : '-translate-x-[200%]'}`}
+                  >
+                    {[
+                      'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80',
+                      'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80',
+                      'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
+                    ].map((image, index) => (
+                      <div key={index} className="min-w-full shrink-0 grow-0 basis-full">
+                        <div className="relative overflow-hidden rounded-xl">
+                          <img alt={`promo-${index + 1}`} className="h-40 w-full object-cover sm:h-48 md:h-56" src={image} />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0f2c2a]/80 via-[#0f2c2a]/20 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-5">
+                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/70">Featured</p>
+                            <h3 className="mt-1 text-lg font-semibold sm:text-xl">Smart payments that feel effortless</h3>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 flex justify-center gap-1.5">
+                {[0, 1, 2].map((dotIndex) => (
+                  <div
+                    key={dotIndex}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${activePromoIndex === dotIndex ? 'w-4 bg-[#1C3F3B]' : 'w-1.5 bg-[#1C3F3B]/30'}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Right Column: 4 columns - Recent Transactions & Upcoming Bills */}
-          <div className="lg:col-span-4 space-y-3 xs:space-y-3.5 sm:space-y-4 md:space-y-5">
-            {/* Recent Transactions */}
-            <div className="bg-white rounded-lg shadow-sm p-3 xs:p-3.5 md:p-4 border border-[#1C3F3B]/10">
-              <div className="flex justify-between items-center mb-2.5 xs:mb-3">
-                <h3 className="text-sm xs:text-base font-bold text-[#333333] font-[family-name:Syne]">Recent Transactions</h3>
-                <Link
-                  href="/transactions"
-                  className="text-[#1C3F3B] hover:text-[#152d2a] text-[10px] xs:text-xs font-semibold flex items-center gap-1 transition-colors"
-                >
-                  <span>View</span>
-                  <MdArrowForward size={12} />
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[#1C3F3B]/10 bg-white p-3 shadow-sm sm:p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-base font-semibold text-[#122927]">Recent transactions</h3>
+                <Link href="/transactions" className="text-sm font-semibold text-[#1C3F3B] transition-colors hover:text-[#152d2a]">
+                  View all
                 </Link>
               </div>
-              
+
               {isLoadingTransactions ? (
-                <div className="text-center py-3 xs:py-4">
-                  <div className="w-8 h-8 rounded-lg bg-[#1C3F3B]/5 flex items-center justify-center mx-auto mb-1 animate-pulse">
+                <div className="rounded-xl bg-[#F8FAFA] py-4 text-center">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-[#1C3F3B]/5">
                     <MdDescription size={16} className="text-[#888888]" />
                   </div>
-                  <p className="text-[10px] xs:text-xs text-[#888888]">Loading transactions...</p>
+                  <p className="text-sm text-[#888888]">Loading transactions...</p>
                 </div>
               ) : recentTransactions.length === 0 ? (
-                <div className="text-center py-3 xs:py-4">
-                  <div className="w-8 h-8 rounded-lg bg-[#1C3F3B]/5 flex items-center justify-center mx-auto mb-1">
+                <div className="rounded-xl bg-[#F8FAFA] py-4 text-center">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-[#1C3F3B]/5">
                     <MdDescription size={16} className="text-[#888888]" />
                   </div>
-                  <p className="text-[10px] xs:text-xs text-[#888888]">No transactions yet</p>
+                  <p className="text-sm text-[#888888]">No transactions yet</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -259,61 +312,48 @@ export default function HomePage() {
                     <button
                       key={transaction.id}
                       onClick={() => router.push(`/transactions?id=${transaction.id}`)}
-                      className="w-full text-left flex items-center justify-between p-2.5 rounded-lg bg-[#F5F6F8] hover:bg-[#1C3F3B]/5 transition-colors group"
+                      className="flex w-full items-center justify-between rounded-xl bg-[#F8FAFA] p-3 text-left transition-colors hover:bg-[#1C3F3B]/5"
                     >
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          String(transaction.type).includes('received') || String(transaction.type).includes('deposit') 
-                            ? 'bg-green-100' 
-                            : 'bg-red-100'
-                        }`}>
+                      <div className="flex min-w-0 items-center gap-2">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-transparent">
                           {getTransactionIcon(transaction.type, transaction.description, index)}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] xs:text-xs font-semibold text-[#333333] truncate">{transaction.description}</p>
-                          <p className="text-[9px] xs:text-[10px] text-[#888888]">{new Date(transaction.date).toLocaleDateString()}</p>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-[#333333]">{transaction.description}</p>
+                          <p className="text-xs text-[#888888]">{new Date(transaction.date).toLocaleDateString()}</p>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 text-right">
-                        <p className={`text-[10px] xs:text-xs font-bold ${
-                          String(transaction.type).includes('received') || String(transaction.type).includes('deposit')
-                            ? 'text-green-600' 
-                            : 'text-red-600'
-                        }`}>
-                          {String(transaction.type).includes('received') || String(transaction.type).includes('deposit') ? '+' : '-'}₦{normalizeAmount(transaction.amount).toLocaleString()}
-                        </p>
-                      </div>
+                      <p className={`text-sm font-semibold ${
+                        String(transaction.type).includes('received') || String(transaction.type).includes('deposit')
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}>
+                        {String(transaction.type).includes('received') || String(transaction.type).includes('deposit') ? '+' : '-'}₦{normalizeAmount(transaction.amount).toLocaleString()}
+                      </p>
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Upcoming Bills */}
-            <div className="bg-white rounded-lg shadow-sm p-3 xs:p-3.5 md:p-4 border border-[#1C3F3B]/10">
-              <div className="flex justify-between items-center mb-2.5 xs:mb-3">
-                <h3 className="text-sm xs:text-base font-bold text-[#333333] font-[family-name:Syne]">Upcoming Bills</h3>
-                <Link
-                  href="/payment"
-                  className="text-[#1C3F3B] hover:text-[#152d2a] text-[10px] xs:text-xs font-semibold flex items-center gap-1 transition-colors"
-                >
-                  <span>All</span>
-                  <MdArrowForward size={14} />
+            <div className="rounded-2xl border border-[#1C3F3B]/10 bg-white p-3 shadow-sm sm:p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-base font-semibold text-[#122927]">Upcoming bills</h3>
+                <Link href="/payment" className="text-sm font-semibold text-[#1C3F3B] transition-colors hover:text-[#152d2a]">
+                  All bills
                 </Link>
               </div>
-              {/* Empty State */}
-              <div className="text-center py-4 xs:py-6">
-                <div className="w-8 h-8 rounded-lg bg-[#2D5D59]/5 flex items-center justify-center mx-auto mb-1.5 xs:mb-2">
+              <div className="rounded-xl bg-[#F8FAFA] py-5 text-center">
+                <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-[#2D5D59]/5">
                   <MdDescription size={18} className="text-[#888888]" />
                 </div>
-                <p className="text-[10px] xs:text-xs text-[#888888]">No upcoming bills</p>
+                <p className="text-sm text-[#888888]">No upcoming bills</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Modals */}
       <TransferModal isOpen={isTransferOpen} onClose={() => setIsTransferOpen(false)} />
       <GetQRModal isOpen={isGetQROpen} onClose={() => setIsGetQROpen(false)} />
       <DepositModal isOpen={isDepositOpen} onClose={() => setIsDepositOpen(false)} />

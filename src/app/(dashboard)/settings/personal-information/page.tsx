@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { MdArrowBack, MdPerson } from 'react-icons/md';
 import { useAuth } from '@/hooks/useAuth';
 import { toastSuccess, toastError } from '@/hooks/useToast';
 
@@ -44,62 +45,64 @@ export default function PersonalInformationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8]">
-      {/* Header */}
-      <div className="bg-white border-b border-[#1C3F3B]/10">
-        <div className="max-w-5xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.back()}
-              title="Go back"
-              className="p-1 -ml-1 hover:bg-[#1C3F3B]/5 rounded-lg transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <div>
-              <h1 className="text-base sm:text-lg md:text-xl font-bold text-[#333333]">Personal Information</h1>
-              <p className="text-[#888888] text-[10px] mt-0.5">Update your account details</p>
-            </div>
+    <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
+      <div className="border-b border-[#1C3F3B]/10 bg-white">
+        <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
+          <button
+            onClick={() => router.back()}
+            title="Go back"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+          >
+            <MdArrowBack size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Personal Information</h1>
+            <p className="text-sm text-[#64748B]">Update your account details</p>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <main className="max-w-2xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-3 sm:py-4 md:py-4">
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-[#1C3F3B]/10 p-4">
-          {/* Full Name */}
+      <main className="mx-auto max-w-2xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+        <form onSubmit={handleSubmit} className="rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-5 flex items-center gap-3 rounded-2xl bg-[#F8FAFA] p-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1C3F3B]/10 text-[#1C3F3B]">
+              <MdPerson size={20} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#122927]">Profile details</p>
+              <p className="text-sm text-[#64748B]">Keep your profile accurate and current</p>
+            </div>
+          </div>
+
           <div className="mb-4">
-            <label className="block text-xs font-semibold text-[#1C3F3B] mb-1.5">Full Name</label>
+            <label className="mb-1.5 block text-sm font-semibold text-[#122927]">Full Name</label>
             <input
               type="text"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 border border-[#1C3F3B]/20 rounded-lg text-xs bg-white focus:outline-none focus:border-[#1C3F3B] transition-colors"
+              className="w-full rounded-2xl border border-[#E5E7EB] bg-white px-3 py-3 text-sm text-[#122927] placeholder:text-[#94A3B8] focus:border-[#1C3F3B] focus:outline-none"
               placeholder="Enter your full name"
             />
           </div>
 
-          {/* Email */}
-          <div className="mb-4">
-            <label className="block text-xs font-semibold text-[#1C3F3B] mb-1.5">Email Address</label>
+          <div className="mb-5">
+            <label className="mb-1.5 block text-sm font-semibold text-[#122927]">Email Address</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2.5 border border-[#1C3F3B]/20 rounded-lg text-xs bg-white focus:outline-none focus:border-[#1C3F3B] transition-colors"
+              className="w-full rounded-2xl border border-[#E5E7EB] bg-white px-3 py-3 text-sm text-[#122927] placeholder:text-[#94A3B8] focus:border-[#1C3F3B] focus:outline-none"
               placeholder="Enter your email"
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 bg-[#1C3F3B] text-white font-semibold text-xs rounded-lg hover:bg-[#152d2a] transition-colors disabled:opacity-50"
+            className="w-full rounded-2xl bg-[#1C3F3B] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#152d2a] disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save Changes'}
           </button>

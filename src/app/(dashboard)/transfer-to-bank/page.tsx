@@ -139,28 +139,27 @@ export default function TransferToBankPage() {
   };
 
   return (
-    <div className="min-h-screen bg-paybancx-bg pb-20 md:pb-8">
-      {/* Header - Responsive */}
-      <div className="bg-white border-b border-paybancx-border sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-3 sm:py-4 md:py-5">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="p-2 hover:bg-paybancx-primary/5 rounded-card transition-all duration-300 hover:scale-[1.02] flex-shrink-0"
-              title="Go back"
-              aria-label="Go back"
-            >
-              <MdArrowBack size={20} />
-            </button>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Transfer to Bank</h1>
+    <div className="min-h-screen bg-[#F5F6F8] pb-20 text-[#122927] md:pb-8">
+      <div className="sticky top-0 z-10 border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+          <button
+            onClick={() => router.back()}
+            title="Go back"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+          >
+            <MdArrowBack size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Transfer to Bank</h1>
+            <p className="text-sm text-[#64748B]">Send money to a bank account</p>
           </div>
         </div>
       </div>
 
-      {/* Form Container - Responsive */}
-      <main className="max-w-2xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
+      <main className="mx-auto max-w-2xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
         <form onSubmit={handleSubmit}>
-          <div className="space-y-5 sm:space-y-6">
+          <div className="space-y-4 rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-6">
           {/* Amount Input */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-paybancx-text-dark">

@@ -48,7 +48,7 @@ export default function ResetSuccessPage() {
             <h2
               className="text-white text-4xl font-bold leading-tight mb-4 font-[family-name:Syne]"
             >
-              You're all<br />set!
+              You&apos;re all<br />set!
             </h2>
             <p className="text-[#A8D8D0] text-sm leading-relaxed max-w-[220px]">
               Your password has been successfully reset. You can now sign in with your new password.

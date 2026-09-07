@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-style-component-with-dynamic-styles */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -168,26 +167,25 @@ const TVSubscription = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-paybancx-bg to-white pb-32 md:pb-20">
-      {/* Header */}
-      <header className="bg-white border-b border-paybancx-border">
-        <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-4 flex items-center gap-4">
+    <div className="min-h-screen bg-[#F5F6F8] pb-32 text-[#122927] md:pb-20">
+      <header className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-6 sm:py-4 md:px-8">
           <button
             onClick={() => router.back()}
             title="Go back"
-            className="p-2 hover:bg-paybancx-primary/5 rounded-lg transition hover:scale-[1.02]"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
           >
-            <MdArrowBack className="w-6 h-6 text-paybancx-action" />
+            <MdArrowBack size={20} />
           </button>
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold text-paybancx-text-dark">TV Subscription</h1>
-            <p className="text-paybancx-text-muted text-sm md:text-base mt-1">Renew your TV subscription</p>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">TV Subscription</h1>
+            <p className="text-sm text-[#64748B]">Renew your TV subscription</p>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-4 space-y-3 md:space-y-4 pb-12">
+      <main className="mx-auto max-w-6xl space-y-3 px-3 py-4 xs:px-4 sm:px-6 sm:py-5 md:px-8 md:space-y-4">
         {/* Select Provider */}
         <div className="form-group relative">
           <label className="block text-sm font-medium mb-2 text-paybancx-text-muted">Select Provider</label>

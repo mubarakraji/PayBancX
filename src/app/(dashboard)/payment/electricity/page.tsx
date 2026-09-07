@@ -1,7 +1,6 @@
-/* eslint-disable @next/next/no-style-component-with-dynamic-styles */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { MdArrowBack, MdCheckCircle, MdVerified, MdExpandMore } from 'react-icons/md';
 import { getElectricityDISCOs, buyElectricity, verifyElectricityMeter } from '@/services/paymentService';
@@ -9,18 +8,54 @@ import { useAuth } from '@/hooks/useAuth';
 import { toastError, toastSuccess } from '@/hooks/useToast';
 
 // All 11 Nigerian Distribution Companies (DISCOs) with image paths
+const DISCO_SERVICE_ID_MAP: Record<string, string> = {
+  aedc: 'AEDC',
+  abujaelectric: 'AEDC',
+  'abuja-electric': 'AEDC',
+  bedc: 'BEDC',
+  beninelectric: 'BEDC',
+  'benin-electric': 'BEDC',
+  ekedc: 'EKEDC',
+  ekoelectric: 'EKEDC',
+  'eko-electric': 'EKEDC',
+  eedc: 'EEDC',
+  enuguelectric: 'EEDC',
+  'enugu-electric': 'EEDC',
+  ibedc: 'IBEDC',
+  ibadanelectric: 'IBEDC',
+  'ibadan-electric': 'IBEDC',
+  ikedc: 'IKEDC',
+  ikejaelectric: 'IKEDC',
+  'ikeja-electric': 'IKEDC',
+  jedc: 'JEDC',
+  joselectric: 'JEDC',
+  'jos-electric': 'JEDC',
+  kadc: 'KADC',
+  kadunaelectric: 'KADC',
+  'kaduna-electric': 'KADC',
+  kedc: 'KEDC',
+  kanoelectric: 'KEDC',
+  'kano-electric': 'KEDC',
+  phed: 'PHED',
+  portharcourtelectric: 'PHED',
+  'portharcourt-electric': 'PHED',
+  yedc: 'YEDC',
+  yolaelectric: 'YEDC',
+  'yola-electric': 'YEDC',
+};
+
 const NIGERIAN_DISCOS = [
-  { id: 'aedc', code: 'AEDC', name: 'Abuja Electric', region: 'Abuja, Niger, Nasarawa, Kogi', image: '/e1.png', discoCode: 'abuja-electric' },
-  { id: 'bedc', code: 'BEDC', name: 'Benin Electric', region: 'Edo, Delta', image: '/e2.png', discoCode: 'benin-electric' },
-  { id: 'ekedc', code: 'EKEDC', name: 'Eko Electric', region: 'Lagos Mainland', image: '/e3.png', discoCode: 'eko-electric' },
-  { id: 'eedc', code: 'EEDC', name: 'Enugu Electric', region: 'Enugu, Ebonyi, Abia', image: '/e4.png', discoCode: 'enugu-electric' },
-  { id: 'ibedc', code: 'IBEDC', name: 'Ibadan Electric', region: 'Oyo, Osun, Ekiti, Kwara', image: '/e5.png', discoCode: 'ibadan-electric' },
-  { id: 'ikedc', code: 'IKEDC', name: 'Ikeja Electric', region: 'Lagos Island, Ikeja', image: '/e6.png', discoCode: 'ikeja-electric' },
-  { id: 'jedc', code: 'JEDC', name: 'Jos Electric', region: 'Plateau, Bauchi', image: '/e7.png', discoCode: 'jos-electric' },
-  { id: 'kadc', code: 'KADC', name: 'Kaduna Electric', region: 'Kaduna, Katsina', image: '/e8.png', discoCode: 'kaduna-electric' },
-  { id: 'kedc', code: 'KEDC', name: 'Kano Electric', region: 'Kano, Jigawa', image: '/e9.png', discoCode: 'kano-electric' },
-  { id: 'phed', code: 'PHED', name: 'Port Harcourt Electric', region: 'Rivers, Bayelsa', image: '/e10.png', discoCode: 'portharcourt-electric' },
-  { id: 'yedc', code: 'YEDC', name: 'Yola Electric', region: 'Adamawa, Taraba', image: '/e11.png', discoCode: 'yola-electric' },
+  { id: 'aedc', code: 'AEDC', service_id: 'AEDC', name: 'Abuja Electric', region: 'Abuja, Niger, Nasarawa, Kogi', image: '/e1.png', discoCode: 'abuja-electric' },
+  { id: 'bedc', code: 'BEDC', service_id: 'BEDC', name: 'Benin Electric', region: 'Edo, Delta', image: '/e2.png', discoCode: 'benin-electric' },
+  { id: 'ekedc', code: 'EKEDC', service_id: 'EKEDC', name: 'Eko Electric', region: 'Lagos Mainland', image: '/e3.png', discoCode: 'eko-electric' },
+  { id: 'eedc', code: 'EEDC', service_id: 'EEDC', name: 'Enugu Electric', region: 'Enugu, Ebonyi, Abia', image: '/e4.png', discoCode: 'enugu-electric' },
+  { id: 'ibedc', code: 'IBEDC', service_id: 'IBEDC', name: 'Ibadan Electric', region: 'Oyo, Osun, Ekiti, Kwara', image: '/e5.png', discoCode: 'ibadan-electric' },
+  { id: 'ikedc', code: 'IKEDC', service_id: 'IKEDC', name: 'Ikeja Electric', region: 'Lagos Island, Ikeja', image: '/e6.png', discoCode: 'ikeja-electric' },
+  { id: 'jedc', code: 'JEDC', service_id: 'JEDC', name: 'Jos Electric', region: 'Plateau, Bauchi', image: '/e7.png', discoCode: 'jos-electric' },
+  { id: 'kadc', code: 'KADC', service_id: 'KADC', name: 'Kaduna Electric', region: 'Kaduna, Katsina', image: '/e8.png', discoCode: 'kaduna-electric' },
+  { id: 'kedc', code: 'KEDC', service_id: 'KEDC', name: 'Kano Electric', region: 'Kano, Jigawa', image: '/e9.png', discoCode: 'kano-electric' },
+  { id: 'phed', code: 'PHED', service_id: 'PHED', name: 'Port Harcourt Electric', region: 'Rivers, Bayelsa', image: '/e10.png', discoCode: 'portharcourt-electric' },
+  { id: 'yedc', code: 'YEDC', service_id: 'YEDC', name: 'Yola Electric', region: 'Adamawa, Taraba', image: '/e11.png', discoCode: 'yola-electric' },
 ];
 
 // Fallback plans with common amounts
@@ -31,9 +66,25 @@ const FALLBACK_AMOUNTS = [
   { id: '4', amount: 10000, label: '₦10,000' },
 ];
 
+const normalizeElectricityServiceIdValue = (value?: string): string => {
+  if (!value) return '';
+  const cleanedValue = value.toString().trim();
+  if (!cleanedValue) return '';
+  const lookupKey = cleanedValue.toLowerCase().replace(/[^a-z]/g, '');
+  const fromMap = DISCO_SERVICE_ID_MAP[lookupKey];
+  if (fromMap) return fromMap;
+  const upper = cleanedValue.toUpperCase();
+  return upper.length > 0 ? upper : '';
+};
+
+const resolveElectricityServiceId = (disco: any): string => {
+  const candidate = disco?.service_id || disco?.serviceId || disco?.code || disco?.discoCode || disco?.id || disco?.name || '';
+  return normalizeElectricityServiceIdValue(candidate);
+};
+
 export default function ElectricityPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   
   const [selectedDisco, setSelectedDisco] = useState<any | null>(null);
   const [meterType, setMeterType] = useState<'prepaid' | 'postpaid'>('prepaid');
@@ -46,6 +97,7 @@ export default function ElectricityPage() {
   const [verifiedCustomer, setVerifiedCustomer] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [showDiscoDropdown, setShowDiscoDropdown] = useState(false);
+  const lastVerificationKeyRef = useRef<string>('');
 
   // Fetch DISCOs from API on mount
   useEffect(() => {
@@ -67,8 +119,7 @@ export default function ElectricityPage() {
         setDiscos(NIGERIAN_DISCOS);
       }
     } catch (err) {
-      console.log('[ElectricityPage] ℹ Using fallback DISCOs');
-      console.warn('[ElectricityPage] Using fallback DISCOs');
+      console.debug('[ElectricityPage] Using fallback DISCOs');
       setDiscos(NIGERIAN_DISCOS);
     } finally {
       setIsLoadingDiscos(false);
@@ -79,53 +130,75 @@ export default function ElectricityPage() {
   const isComplete = selectedDisco && meterNumber && finalAmount && verifiedCustomer;
 
   const handleMeterNumberChange = async (value: string) => {
-    setMeterNumber(value);
+    const sanitizedValue = value.replace(/\D/g, '');
+    setMeterNumber(sanitizedValue);
     setVerifiedCustomer(null);
-    
-    if (value.trim().length >= 10 && selectedDisco) {
-      setIsVerifying(true);
-      try {
-        const discoValue = selectedDisco.discoCode || selectedDisco.code || selectedDisco.name;
-        console.log('[ElectricityPage] 📋 Calling verification with:');
-        console.log('[ElectricityPage] - DISCO:', discoValue, `(from selectedDisco.discoCode)`);
-        console.log('[ElectricityPage] - Meter Number:', value);
-        console.log('[ElectricityPage] - Meter Type:', meterType);
-        console.log('[ElectricityPage] - Full selectedDisco object:', selectedDisco);
 
-        const response = await verifyElectricityMeter(discoValue, value, meterType);
-        
-        console.log('[ElectricityPage] ✅ Verification response:', response);
-        
-        if (response.success && response.data?.customerName) {
-          setVerifiedCustomer(response.data.customerName);
-          toastSuccess(`Verified: ${response.data.customerName}`);
-        } else {
-          console.error('Verification response:', response);
-          toastError('Meter not found. Please verify the meter number, DISCO, and type.');
-        }
-      } catch (err) {
-        console.error('Verification error:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to verify meter number';
-        
-        // Show detailed error to user
-        console.error('[ElectricityPage] Full error:', err);
-        
-        // Provide helpful error messages
-        if (errorMessage.includes('not correct') || errorMessage.includes('not valid')) {
-          toastError(`Invalid meter number for ${selectedDisco.name}. Please check and try again.`);
-        } else if (errorMessage.includes('not found')) {
-          toastError('Meter number not found. Please verify it matches your ${selectedDisco.name} account.');
-        } else {
-          toastError(errorMessage);
-        }
-      } finally {
-        setIsVerifying(false);
+    if (!selectedDisco || sanitizedValue.trim().length < 10) {
+      lastVerificationKeyRef.current = '';
+      return;
+    }
+
+    const verificationKey = `${selectedDisco?.id || selectedDisco?.code || selectedDisco?.name || 'disco'}|${sanitizedValue}|${meterType}`;
+
+    if (verificationKey === lastVerificationKeyRef.current || isVerifying) {
+      return;
+    }
+
+    lastVerificationKeyRef.current = verificationKey;
+    setIsVerifying(true);
+
+    try {
+      const serviceId = normalizeElectricityServiceIdValue(
+        selectedDisco?.service_id || selectedDisco?.serviceId || selectedDisco?.code || selectedDisco?.discoCode || selectedDisco?.id || selectedDisco?.name || ''
+      );
+      const discoValue = normalizeElectricityServiceIdValue(
+        selectedDisco?.discoCode || selectedDisco?.code || selectedDisco?.service_id || selectedDisco?.serviceId || selectedDisco?.id || selectedDisco?.name || ''
+      );
+      console.log('[ElectricityPage] 📋 Calling verification with:');
+      console.log('[ElectricityPage] - SERVICE_ID:', serviceId, `(preferred value for backend validation)`);
+      console.log('[ElectricityPage] - DISCO:', discoValue, `(preferred value for backend lookup)`);
+      console.log('[ElectricityPage] - Meter Number:', sanitizedValue);
+      console.log('[ElectricityPage] - Meter Type:', meterType);
+      console.log('[ElectricityPage] - Full selectedDisco object:', selectedDisco);
+
+      const response = await verifyElectricityMeter(discoValue, sanitizedValue, meterType, serviceId);
+
+      console.log('[ElectricityPage] ✅ Verification response:', response);
+
+      if (response.success && response.data?.customerName) {
+        setVerifiedCustomer(response.data.customerName);
+        toastSuccess(`Verified: ${response.data.customerName}`);
+      } else {
+        console.error('Verification response:', response);
+        toastError('Meter not found. Please verify the meter number, DISCO, and type.');
       }
+    } catch (err) {
+      console.error('Verification error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to verify meter number';
+
+      console.error('[ElectricityPage] Full error:', err);
+
+      if (errorMessage.includes('not correct') || errorMessage.includes('not valid')) {
+        toastError(`Invalid meter number for ${selectedDisco.name}. Please check and try again.`);
+      } else if (errorMessage.includes('not found')) {
+        toastError(`Meter number not found. Please verify it matches your ${selectedDisco?.name || 'selected DISCO'} account.`);
+      } else {
+        toastError(errorMessage);
+      }
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   const handleBuyElectricity = async () => {
     if (!isComplete) return;
+
+    const normalizedPhoneNumber = (user?.phone || '').replace(/\D/g, '');
+    if (!normalizedPhoneNumber) {
+      toastError('Please add your phone number in your profile before buying electricity.');
+      return;
+    }
     
     setIsBuying(true);
 
@@ -135,12 +208,15 @@ export default function ElectricityPage() {
       console.log('[ElectricityPage] Meter Type:', meterType);
       console.log('[ElectricityPage] Meter Number:', meterNumber);
       console.log('[ElectricityPage] Amount:', finalAmount);
+      console.log('[ElectricityPage] Phone Number:', normalizedPhoneNumber);
 
       const response = await buyElectricity({
-        disco: selectedDisco.discoCode || selectedDisco.code || selectedDisco.name,
+        disco: resolveElectricityServiceId(selectedDisco),
+        service_id: selectedDisco?.service_id || selectedDisco?.serviceId || resolveElectricityServiceId(selectedDisco),
         meterType,
         meterNumber,
         amount: finalAmount,
+        phoneNumber: normalizedPhoneNumber,
       });
 
       console.log('[ElectricityPage] ✅ Purchase successful:', response);
@@ -168,28 +244,27 @@ export default function ElectricityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-paybancx-bg to-white pb-16 md:pb-6">
-      {/* Header */}
-      <header className="bg-white border-b border-paybancx-border">
-        <div className="max-w-5xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3 flex items-center gap-3">
+    <div className="min-h-screen bg-[#F5F6F8] pb-16 text-[#122927] md:pb-6">
+      <header className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-4xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
-            className="p-1 hover:bg-paybancx-primary/5 rounded-lg transition hover:scale-[1.02]"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
           >
-            <MdArrowBack className="w-5 h-5" style={{ color: '#204541' }} />
+            <MdArrowBack size={20} />
           </button>
           <div>
-            <h1 className="text-lg md:text-2xl font-bold text-paybancx-text-dark">Buy Electricity</h1>
-            <p className="text-paybancx-text-muted text-xs md:text-sm mt-0.5">Pay your electricity bills</p>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Buy Electricity</h1>
+            <p className="text-sm text-[#64748B]">Pay your electricity bills</p>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
+      <main className="mx-auto max-w-4xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         {/* Select DISCO */}
-        <section className="mb-3">
+        <section className="relative mb-3">
           <label className="block font-semibold text-paybancx-text-dark mb-2 text-sm">
             Select DISCO (Distribution Company)
           </label>

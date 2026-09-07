@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-style-component-with-dynamic-styles */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -143,57 +142,58 @@ export default function AirtimePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-paybancx-bg to-white">
-      {/* Header */}
-      <header className="bg-white border-b border-paybancx-border">
-        <div className="max-w-5xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3 flex items-center gap-3">
+    <div className="min-h-screen bg-[#F5F6F8] pb-6 text-[#122927]">
+      <header className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6">
           <button
             onClick={() => router.back()}
             title="Go back"
-            className="p-1 hover:bg-paybancx-primary/5 rounded-lg transition hover:scale-[1.02]"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
           >
-            <MdArrowBack className="w-5 h-5 text-paybancx-action" />
+            <MdArrowBack size={20} />
           </button>
           <div>
-            <h1 className="text-lg md:text-2xl font-bold text-paybancx-text-dark">Buy Airtime</h1>
-            <p className="text-paybancx-text-muted text-xs md:text-sm mt-0.5">Purchase airtime for all networks</p>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Buy Airtime</h1>
+            <p className="text-sm text-[#64748B]">Purchase airtime for all networks</p>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3">
+      <main className="mx-auto max-w-5xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
           {/* Left Column - Form */}
           <div className="lg:col-span-2 space-y-3">
             {/* Select Network */}
-            <section className="mb-3 bg-white rounded-2xl p-3 md:p-3.5 border border-paybancx-border shadow-soft">
+            <section className="mb-3 rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
               <label className="block font-bold text-paybancx-text-dark mb-2 text-base">
                 Select Mobile Network
               </label>
               <div className="flex gap-3 overflow-x-auto pb-1">
                 {providers.map((network, idx) => {
                   const isActive = selectedNetwork === network.id;
-                  const imageNumber = idx + 1;
-                  
+                  const logoSrc = `/s${idx + 1}.png`;
+
                   return (
                     <button
                       key={network.id}
                       onClick={() => setSelectedNetwork(network.id)}
-                      className={`min-w-[80px] h-[80px] rounded-card flex flex-col items-center justify-center gap-2 transition border-2 relative flex-shrink-0 bg-white ${
+                      aria-pressed={isActive}
+                      className={`flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-2xl border p-2 transition-all duration-200 ${
                         isActive
-                          ? 'border-paybancx-action ring-2 ring-paybancx-action ring-opacity-30 shadow-lg'
-                          : 'border-paybancx-border hover:border-paybancx-action'
+                          ? 'border-[#1E5F5B] bg-[#F0F7F6] shadow-[0_0_0_2px_rgba(30,95,91,0.12)]'
+                          : 'border-transparent bg-white hover:border-[#B9CFCB] hover:bg-[#F7FAF9] hover:shadow-sm'
                       }`}
                       title={network.name}
                       disabled={isBuying}
                     >
                       <Image
-                        src={`/m${imageNumber}.png`}
+                        src={logoSrc}
                         alt={network.name}
-                        width={64}
-                        height={64}
-                        className="w-16 h-16 object-contain"
+                        width={72}
+                        height={72}
+                        className="h-[52px] w-[52px] object-contain sm:h-[58px] sm:w-[58px]"
+                        priority={isActive}
                       />
                     </button>
                   );
@@ -289,7 +289,7 @@ export default function AirtimePage() {
 
         {/* Right Column - Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl p-3 md:p-4 border border-paybancx-border shadow-soft sticky top-[80px]">
+          <div className="sticky top-[80px] rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm sm:p-5">
             <h3 className="font-bold text-paybancx-text-dark mb-3 text-base">Order Summary</h3>
             
             <div className="space-y-2.5 pb-4 border-b border-paybancx-border">

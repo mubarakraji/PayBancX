@@ -45,6 +45,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('[Wallet Balance API] Non-JSON backend response:', text.substring(0, 300));
+      return NextResponse.json(
+        { success: false, message: 'Wallet balance service returned an invalid response' },
+        { status: response.status || 502 }
+      );
+    }
+
     const data = await response.json();
     const transformedData = transformBigInt(data);
 

@@ -1,12 +1,17 @@
 // Payment Services - Airtime, Data, Electricity, TV, Betting
-import { API_ENDPOINTS, buildApiUrl, getAuthHeaders } from '@/config/apiConfig';
+import { API_ENDPOINTS, buildApiUrl, getAuthHeaders, authenticatedFetch } from '@/config/apiConfig';
 
 export interface ServiceOption {
   id: string;
   name: string;
   code: string;
+  service_id?: string;
+  serviceId?: string;
   amount?: number;
   validity?: string;
+  region?: string;
+  image?: string;
+  discoCode?: string;
 }
 
 export interface AirtimeData {
@@ -26,12 +31,67 @@ export interface ElectricityData {
   meterNumber: string;
   meterType: 'prepaid' | 'postpaid';
   disco: string; // Distribution company
+  service_id?: string;
+  phoneNumber?: string;
   amount: number;
 }
 
 export interface ElectricityVerifyData {
   meterNumber: string;
   disco: string;
+  service_id?: string;
+}
+
+const ELECTRICITY_SERVICE_ID_MAP: Record<string, string> = {
+  aedc: 'AEDC',
+  abujaelectric: 'AEDC',
+  'abuja-electric': 'AEDC',
+  bedc: 'BEDC',
+  beninelectric: 'BEDC',
+  'benin-electric': 'BEDC',
+  ekedc: 'EKEDC',
+  ekoelectric: 'EKEDC',
+  'eko-electric': 'EKEDC',
+  eedc: 'EEDC',
+  enuguelectric: 'EEDC',
+  'enugu-electric': 'EEDC',
+  ibedc: 'IBEDC',
+  ibadanelectric: 'IBEDC',
+  'ibadan-electric': 'IBEDC',
+  ikedc: 'IKEDC',
+  ikejaelectric: 'IKEDC',
+  'ikeja-electric': 'IKEDC',
+  jedc: 'JEDC',
+  joselectric: 'JEDC',
+  'jos-electric': 'JEDC',
+  kadc: 'KADC',
+  kadunaelectric: 'KADC',
+  'kaduna-electric': 'KADC',
+  kedc: 'KEDC',
+  kanoelectric: 'KEDC',
+  'kano-electric': 'KEDC',
+  phed: 'PHED',
+  portharcourtelectric: 'PHED',
+  'portharcourt-electric': 'PHED',
+  yedc: 'YEDC',
+  yolaelectric: 'YEDC',
+  'yola-electric': 'YEDC',
+};
+
+function normalizeElectricityServiceId(disco: string, serviceId?: string): { disco: string; service_id: string } {
+  const rawServiceId = (serviceId || disco || '').toString().trim();
+  const lookupKey = rawServiceId.toLowerCase().replace(/[^a-z]/g, '');
+  const mappedServiceId = ELECTRICITY_SERVICE_ID_MAP[lookupKey] || rawServiceId.toUpperCase();
+  const normalizedDisco = (disco || rawServiceId || '').toString().trim();
+
+  if (!normalizedDisco && !mappedServiceId) {
+    return { disco: '', service_id: '' };
+  }
+
+  return {
+    disco: normalizedDisco,
+    service_id: mappedServiceId || normalizedDisco.toUpperCase(),
+  };
 }
 
 export interface TVData {
@@ -71,15 +131,12 @@ export interface ServiceResponse {
 // Get Airtime Providers
 export async function getAirtimeProviders(): Promise<ServiceOption[]> {
   try {
-    const headers = getAuthHeaders();
     const url = buildApiUrl(API_ENDPOINTS.SERVICES.AIRTIME);
     
     console.log('[Airtime Service] Fetching providers from:', url);
-    console.log('[Airtime Service] Headers:', headers);
     
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -112,15 +169,12 @@ export async function getAirtimeProviders(): Promise<ServiceOption[]> {
 export async function buyAirtime(airtimeData: AirtimeData): Promise<ServiceResponse> {
   try {
     const url = '/api/services/airtime';
-    const headers = getAuthHeaders();
     
     console.log('[Airtime Service] Buying airtime to:', url);
     console.log('[Airtime Service] Request body:', airtimeData);
-    console.log('[Airtime Service] Headers:', headers);
     
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify(airtimeData),
     });
 
@@ -143,16 +197,13 @@ export async function buyAirtime(airtimeData: AirtimeData): Promise<ServiceRespo
 // Get Data Variations for Network
 export async function getDataVariations(network: string): Promise<ServiceOption[]> {
   try {
-    const headers = getAuthHeaders();
     const url = `/api/services/data?network=${encodeURIComponent(network)}`;
     
     console.log('[Data Service] Fetching variations for network:', network);
     console.log('[Data Service] Fetching from:', url);
-    console.log('[Data Service] Headers:', headers);
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -217,15 +268,12 @@ export async function getDataVariations(network: string): Promise<ServiceOption[
 export async function buyData(dataData: DataData): Promise<ServiceResponse> {
   try {
     const url = '/api/services/data';
-    const headers = getAuthHeaders();
     
     console.log('[Data Service] Buying data to:', url);
     console.log('[Data Service] Request body:', dataData);
-    console.log('[Data Service] Headers:', headers);
     
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify(dataData),
     });
 
@@ -248,14 +296,12 @@ export async function buyData(dataData: DataData): Promise<ServiceResponse> {
 // Get Electricity DISCOs/Providers
 export async function getElectricityDISCOs(): Promise<ServiceOption[]> {
   try {
-    const headers = getAuthHeaders();
     const url = `/api/services/electricity`;
     
     console.log('[Electricity Service] ✓ Fetching DISCOs...');
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -284,11 +330,19 @@ export async function getElectricityDISCOs(): Promise<ServiceOption[]> {
     }
 
     console.log('[Electricity Service] ✓ Loaded DISCOs:', discos.length);
-    return discos.map((disco: any) => ({
-      id: disco.id || disco.code,
-      name: disco.name || disco.title,
-      code: disco.code || disco.id,
-    }));
+    return discos.map((disco: any) => {
+      const serviceId = disco.service_id || disco.serviceId || disco.id || disco.code || disco.name;
+      return {
+        id: disco.id || serviceId,
+        name: disco.name || disco.title || disco.disco || 'Electricity Provider',
+        code: disco.code || serviceId,
+        service_id: serviceId,
+        serviceId,
+        region: disco.region || disco.area || disco.location || '',
+        image: disco.image || disco.logo || disco.icon || '',
+        discoCode: disco.discoCode || disco.code || serviceId,
+      };
+    });
   } catch (error) {
     console.log('[Electricity Service] ℹ Using local DISCO data');
     throw error;
@@ -296,27 +350,20 @@ export async function getElectricityDISCOs(): Promise<ServiceOption[]> {
 }
 
 // Verify Electricity Meter
-export async function verifyElectricityMeter(disco: string, meterNumber: string, meterType: string = 'prepaid'): Promise<ServiceResponse> {
+export async function verifyElectricityMeter(disco: string, meterNumber: string, meterType: string = 'prepaid', serviceId?: string): Promise<ServiceResponse> {
   try {
-    const headers = getAuthHeaders();
     const url = `/api/services/electricity/verify`;
-    
-    console.log('[Electricity Service] 📋 Verification Request Details:');
-    console.log('[Electricity Service] - DISCO input:', disco, `(type: ${typeof disco})`);
-    console.log('[Electricity Service] - Meter Number input:', meterNumber, `(type: ${typeof meterNumber})`);
-    console.log('[Electricity Service] - Meter Type input:', meterType, `(type: ${typeof meterType})`);
+    const { disco: normalizedDisco } = normalizeElectricityServiceId(disco, serviceId);
 
     const requestPayload = {
-      disco,
+      disco: normalizedDisco,
+      service_id: normalizeElectricityServiceId(disco, serviceId).service_id,
       meterNumber,
       meterType,
     };
 
-    console.log('[Electricity Service] 📤 Full request payload:', JSON.stringify(requestPayload, null, 2));
-
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify(requestPayload),
     });
 
@@ -383,16 +430,23 @@ export async function verifyElectricityMeter(disco: string, meterNumber: string,
 // Buy Electricity
 export async function buyElectricity(electricityData: ElectricityData): Promise<ServiceResponse> {
   try {
-    const headers = getAuthHeaders();
     const url = `/api/services/electricity`;
+    const normalizedDisco = normalizeElectricityServiceId(electricityData.disco, electricityData.service_id).disco;
+    const payload = {
+      disco: normalizedDisco,
+      service_id: normalizeElectricityServiceId(electricityData.disco, electricityData.service_id).service_id,
+      meterNumber: electricityData.meterNumber,
+      meterType: electricityData.meterType,
+      amount: electricityData.amount,
+      phoneNumber: electricityData.phoneNumber,
+    };
     
     console.log('[Electricity Service] Buying electricity');
-    console.log('[Electricity Service] Request body:', electricityData);
+    console.log('[Electricity Service] Request body:', payload);
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
-      body: JSON.stringify(electricityData),
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();
@@ -430,14 +484,12 @@ export async function buyElectricity(electricityData: ElectricityData): Promise<
 // Get TV Providers
 export async function getTVProviders(): Promise<ServiceOption[]> {
   try {
-    const headers = getAuthHeaders();
     const url = `/api/services/tv`;
     
-    console.log('[TV Service] ✓ Attempting to fetch providers...');
+    console.log('[TV Service] Attempting to fetch providers...');
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -478,15 +530,13 @@ export async function getTVProviders(): Promise<ServiceOption[]> {
 // Get TV Variations for Provider
 export async function getTVVariations(provider: string): Promise<ServiceOption[]> {
   try {
-    const headers = getAuthHeaders();
     const url = buildApiUrl(API_ENDPOINTS.SERVICES.TV_VARIATIONS, { provider: provider.toUpperCase() });
     
     console.log('[TV Service] Fetching variations for:', provider);
     console.log('[TV Service] Variations URL:', url);
     
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -525,7 +575,6 @@ export async function getTVVariations(provider: string): Promise<ServiceOption[]
 // Verify TV Smartcard
 export async function verifyTVSmartcard(verifyData: TVVerifyData): Promise<ServiceResponse> {
   try {
-    const headers = getAuthHeaders();
     const url = buildApiUrl(API_ENDPOINTS.SERVICES.TV_VERIFY);
     
     const payload = {
@@ -538,9 +587,8 @@ export async function verifyTVSmartcard(verifyData: TVVerifyData): Promise<Servi
     console.log('[TV Service] - Provider:', payload.provider);
     console.log('[TV Service] Full request payload:', JSON.stringify(payload, null, 2));
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify(payload),
     });
 
@@ -598,9 +646,8 @@ export async function buyTVSubscription(tvData: TVData): Promise<ServiceResponse
     console.log('[TV Service] Buying TV subscription');
     console.log('[TV Service] Request body:', JSON.stringify(payload, null, 2));
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify(payload),
     });
 
@@ -629,14 +676,12 @@ export async function buyTVSubscription(tvData: TVData): Promise<ServiceResponse
 // Verify Betting Account
 export async function getBettingProviders(): Promise<ServiceOption[]> {
   try {
-    const headers = getAuthHeaders();
     const url = `/api/services/betting`;
     
-    console.log('[Betting Service] ✓ Attempting to fetch providers...');
+    console.log('[Betting Service] Attempting to fetch providers...');
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'GET',
-      headers: headers,
     });
 
     const data = await response.json();
@@ -677,7 +722,6 @@ export async function getBettingProviders(): Promise<ServiceOption[]> {
 // Verify Betting Account
 export async function verifyBettingAccount(verifyData: BettingVerifyData): Promise<ServiceResponse> {
   try {
-    const headers = getAuthHeaders();
     const url = buildApiUrl(API_ENDPOINTS.SERVICES.BETTING_VERIFY);
     
     const payload = {
@@ -690,9 +734,8 @@ export async function verifyBettingAccount(verifyData: BettingVerifyData): Promi
     console.log('[Betting Service] Verifying account:', payload);
     console.log('[Betting Service] Request payload:', JSON.stringify(payload, null, 2));
 
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: 'POST',
-      headers: headers,
       body: JSON.stringify(payload),
     });
 

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-style-component-with-dynamic-styles */
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';

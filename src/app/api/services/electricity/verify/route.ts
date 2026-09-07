@@ -8,10 +8,12 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     const body = await request.json();
 
-    const { disco, meterNumber, meterType } = body;
+    const { disco, service_id, serviceId, meterNumber, meterType } = body;
+    const resolvedDisco = (disco || service_id || serviceId || '').toString().trim();
+    const resolvedServiceId = (service_id || serviceId || resolvedDisco).toString().trim().toUpperCase();
 
     console.log('[Electricity Verify API] 📥 Received request body:', JSON.stringify(body, null, 2));
-    console.log('[Electricity Verify API] 🔑 Extracted fields:', { disco, meterNumber, meterType });
+    console.log('[Electricity Verify API] 🔑 Extracted fields:', { disco: resolvedDisco, service_id: resolvedServiceId, meterNumber, meterType });
 
     if (!authHeader) {
       console.log('[Electricity Verify API] ❌ No auth header');
@@ -21,15 +23,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!disco || !meterNumber) {
-      console.log('[Electricity Verify API] ❌ Missing required fields:', { disco, meterNumber });
+    if (!resolvedDisco || !meterNumber) {
+      console.log('[Electricity Verify API] ❌ Missing required fields:', { disco: resolvedDisco, meterNumber });
       return NextResponse.json(
-        { success: false, message: 'Missing required fields: disco, meterNumber' },
+        { success: false, message: 'Missing required fields: disco or service_id, meterNumber' },
         { status: 400 }
       );
     }
 
-    const discoUpper = disco; // disco is already in correct format (e.g., "jos-electric")
+    const discoUpper = resolvedDisco.toUpperCase();
     const meterStr = meterNumber?.toString();
     const meterTypeStr = (meterType || 'prepaid')?.toLowerCase();
 
@@ -57,6 +59,7 @@ export async function POST(request: NextRequest) {
 
     const requestPayload = {
       disco: discoUpper,
+      service_id: resolvedServiceId,
       meterNumber: meterStr,
       meterType: meterTypeStr,
     };
@@ -69,11 +72,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
         'Authorization': authHeader,
       },
-      body: JSON.stringify({
-        disco: discoUpper,
-        meterNumber: meterStr,
-        meterType: meterTypeStr,
-      }),
+      body: JSON.stringify(requestPayload),
     });
 
     const data = await response.json();
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
       console.error('[Electricity Verify API] ❌ Backend error:', response.status, data);
       
       // Extract detailed error information from backend
-      let errorMessage = data.message || 'Failed to verify meter';
+      const errorMessage = data.message || 'Failed to verify meter';
       const errorDetails: any = {};
       
       // Handle various error response formats from backend

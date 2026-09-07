@@ -47,34 +47,26 @@ export default function TransferPage() {
   const [isTransferToQROpen, setIsTransferToQROpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8]">
-      {/* Scrolling Header */}
-      <div className="bg-white border-b border-[#2D5D59]/10">
-        <div className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.back()}
-              className="p-1.5 hover:bg-[#2D5D59]/5 rounded-lg transition-all duration-300 hover:scale-[1.05]"
-              title="Go back"
-            >
-              <MdArrowBack className="w-5 h-5 text-[#2D5D59]" />
-            </button>
-            <div>
-              <h1 className="text-lg xs:text-xl sm:text-2xl md:text-2xl font-bold text-[#333333] font-[family-name:Syne]">
-                Select Transfer Method
-              </h1>
-              <p className="text-[#888888] text-xs xs:text-sm sm:text-sm md:text-sm mt-1">
-                Choose how you want to send money
-              </p>
-            </div>
+    <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
+      <div className="border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-5 sm:py-4 md:px-6 lg:px-8">
+          <button
+            onClick={() => router.back()}
+            title="Go back"
+            aria-label="Go back"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+          >
+            <MdArrowBack size={20} />
+          </button>
+          <div>
+            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Select Transfer Method</h1>
+            <p className="text-sm text-[#64748B]">Choose how you want to send money</p>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 py-4 md:py-5">
-        {/* Transfer Options Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-8 md:mb-10">
+      <main className="mx-auto max-w-6xl px-3 py-4 xs:px-4 sm:px-5 md:px-6 lg:px-8 md:py-5">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:mb-10 md:grid-cols-2 md:gap-5">
           {transferOptions.map((option) => (
             <button
               key={option.id}
@@ -87,7 +79,7 @@ export default function TransferPage() {
               }}
               onMouseEnter={() => setHoveredId(option.id)}
               onMouseLeave={() => setHoveredId(null)}
-              className="group relative bg-white border-2 border-[#1C3F3B]/15 rounded-xl p-4 md:p-5 text-left transition-all duration-300 hover:border-[#1C3F3B]/40 hover:shadow-lg hover:scale-[1.02] overflow-hidden"
+              className="group relative overflow-hidden rounded-3xl border border-[#E5E7EB] bg-white p-4 text-left shadow-sm transition-all duration-200 hover:border-[#1C3F3B]/30 hover:shadow-md md:p-5"
             >
               {/* Visual Gradient Background on Hover */}
               <div
@@ -130,7 +122,7 @@ export default function TransferPage() {
         </div>
 
         {/* Info Section */}
-        <div className="bg-white/60 backdrop-blur-md border border-paybancx-border rounded-2xl p-4 md:p-5 lg:p-6">
+        <div className="rounded-3xl border border-[#E5E7EB] bg-white p-4 shadow-sm md:p-5 lg:p-6">
           <div className="max-w-3xl">
             <h2 className="text-lg xs:text-xl sm:text-xl md:text-lg font-bold text-paybancx-text-dark mb-6">
               Why PayBancX Transfer?

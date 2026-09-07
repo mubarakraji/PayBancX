@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaTimes } from 'react-icons/fa';
+import { MdCheckCircle, MdContentCopy } from 'react-icons/md';
 import { getVirtualAccount } from '@/services/walletService';
-import { toastError } from '@/hooks/useToast';
+import { toastError, toastSuccess } from '@/hooks/useToast';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -16,6 +17,40 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
   const [virtualAccount, setVirtualAccount] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAccountNumberCopied, setIsAccountNumberCopied] = useState(false);
+
+  const copyAccountNumber = async () => {
+    const accountNumber = String(virtualAccount?.accountNumber || '');
+    if (!accountNumber) {
+      toastError('No account number is available to copy.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(accountNumber);
+      setIsAccountNumberCopied(true);
+      toastSuccess('Account number copied!');
+      setTimeout(() => setIsAccountNumberCopied(false), 2000);
+    } catch {
+      const textArea = document.createElement('textarea');
+      textArea.value = accountNumber;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const copied = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (copied) {
+        setIsAccountNumberCopied(true);
+        toastSuccess('Account number copied!');
+        setTimeout(() => setIsAccountNumberCopied(false), 2000);
+      } else {
+        toastError('Copy was blocked. Please select the account number manually.');
+      }
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -173,7 +208,35 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
                     </div>
                     <div>
                       <p className="text-paybancx-text-muted text-sm mb-1">Account Number</p>
-                      <p className="text-paybancx-text-dark font-semibold text-lg">{virtualAccount.accountNumber || 'N/A'}</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-paybancx-text-dark font-semibold text-lg select-all">
+                          {virtualAccount.accountNumber || 'N/A'}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={copyAccountNumber}
+                          className="flex h-9 min-w-[76px] shrink-0 items-center justify-center gap-1 rounded-md border px-2 text-xs font-semibold shadow-sm transition-opacity hover:opacity-90"
+                          style={{
+                            backgroundColor: '#1C3F3B',
+                            borderColor: '#1C3F3B',
+                            color: '#FFFFFF',
+                          }}
+                          title="Copy account number"
+                          aria-label="Copy account number"
+                        >
+                          {isAccountNumberCopied ? (
+                            <>
+                              <MdCheckCircle size={16} />
+                              <span>Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <MdContentCopy size={16} />
+                              <span>Copy</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
                     <div>
                       <p className="text-paybancx-text-muted text-sm mb-1">Account Name</p>

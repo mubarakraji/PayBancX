@@ -61,6 +61,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('[Wallet Transactions API] Non-JSON backend response:', text.substring(0, 300));
+      return NextResponse.json(
+        { success: false, message: 'Wallet service returned an invalid response' },
+        { status: response.status || 502 }
+      );
+    }
+
     const data = await response.json();
     
     // Transform BigInt FIRST before doing anything with the data

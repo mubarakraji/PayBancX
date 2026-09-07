@@ -20,6 +20,14 @@ export default function TransferToQRModal({ isOpen, onClose }: TransferToQRModal
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setIsCameraActive(false);
+  };
+
   useEffect(() => {
     return () => {
       stopCamera();
@@ -69,20 +77,6 @@ export default function TransferToQRModal({ isOpen, onClose }: TransferToQRModal
       toastError('Camera access denied. Please check permissions.');
     }
   };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    setIsCameraActive(false);
-  };
-
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, []);
 
   const handleProceedWithQR = async () => {
     if (!scannedData) {
@@ -288,7 +282,7 @@ export default function TransferToQRModal({ isOpen, onClose }: TransferToQRModal
               <div className="space-y-4">
                 <div>
                   <h3 className="font-bold text-[#1C3F3B] mb-2">Enter Payment Tag</h3>
-                  <p className="text-sm text-[#5a9894]">Enter the recipient's payment tag</p>
+                  <p className="text-sm text-[#5a9894]">Enter the recipient&apos;s payment tag</p>
                 </div>
 
                 <input

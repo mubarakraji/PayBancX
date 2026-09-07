@@ -109,7 +109,7 @@ export default function ForgotPasswordPage() {
               Reset your<br />password safely
             </h2>
             <p className="text-[#9fd4cf] text-xs leading-relaxed max-w-[200px]">
-              We'll help you regain access to your account in just a few simple steps.
+              We&apos;ll help you regain access to your account in just a few simple steps.
             </p>
 
             <div className="flex flex-col gap-2 mt-5">
