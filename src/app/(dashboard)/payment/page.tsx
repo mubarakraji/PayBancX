@@ -14,6 +14,7 @@ import {
   MdShield,
   MdMonetizationOn,
 } from 'react-icons/md';
+import { ServicePromotionBanner } from '@/components/common/ServicePromotionBanner';
 
 interface PaymentOption {
   id: string;
@@ -91,6 +92,8 @@ export default function PaymentPage() {
       </header>
 
       <main className="mx-0 max-w-7xl px-3 py-4 xs:px-4 sm:px-5 sm:py-5 md:px-6">
+        <ServicePromotionBanner />
+
         <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {paymentOptions.map((option) => (
             <button

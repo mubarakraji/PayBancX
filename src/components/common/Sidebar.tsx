@@ -47,10 +47,10 @@ export function Sidebar() {
   return (
     <>
       {/* DESKTOP SIDEBAR - Hidden on mobile/tablet, shown on desktop (lg and up) */}
-      <aside className="hidden lg:flex w-56 bg-white border-r border-[#1C3F3B]/10 p-4 flex-col h-screen sticky top-0">
+      <aside className="hidden lg:flex w-56 bg-white border-r border-[#285858]/15 p-4 flex-col h-screen sticky top-0">
         {/* Logo */}
         <div className="mb-8">
-          <h1 className="font-[family-name:Syne] text-2xl font-bold text-[#1C3F3B]">PayBancX</h1>
+          <h1 className="font-[family-name:Syne] text-2xl font-bold text-[#285858]">PayBancX</h1>
         </div>
 
         {/* Navigation */}
@@ -63,8 +63,8 @@ export function Sidebar() {
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 hover:scale-[1.02] ${
                   isActive
-                    ? 'bg-[#1C3F3B] text-white shadow-md'
-                    : 'text-[#888888] hover:text-[#1C3F3B] hover:bg-[#1C3F3B]/5'
+                    ? 'bg-[#285858] text-white shadow-md'
+                    : 'text-[#858585] hover:text-[#285858] hover:bg-[#285858]/5'
                 }`}
               >
                 <item.icon size={18} />
@@ -81,7 +81,7 @@ export function Sidebar() {
         <button 
           onClick={handleLogout}
           disabled={isLoading}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#888888] hover:text-[#1C3F3B] hover:bg-[#1C3F3B]/5 transition-all duration-300 hover:scale-[1.02] w-full disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#858585] hover:text-[#285858] hover:bg-[#285858]/5 transition-all duration-300 hover:scale-[1.02] w-full disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
         >
           <FaSignOutAlt size={18} />
           <span>{isLoading ? 'Logging out...' : 'Logout'}</span>
@@ -89,10 +89,10 @@ export function Sidebar() {
       </aside>
 
       {/* TABLET SIDEBAR - Hidden on mobile, shown on tablet/iPad (md to lg) */}
-      <aside className="hidden md:flex lg:hidden w-56 bg-white border-r border-[#1C3F3B]/10 p-4 flex-col h-screen sticky top-0">
+      <aside className="hidden md:flex lg:hidden w-56 bg-white border-r border-[#285858]/15 p-4 flex-col h-screen sticky top-0">
         {/* Logo - Compact */}
         <div className="mb-8">
-          <h1 className="font-[family-name:Syne] text-2xl font-bold text-[#1C3F3B]">PayBancX</h1>
+          <h1 className="font-[family-name:Syne] text-2xl font-bold text-[#285858]">PayBancX</h1>
         </div>
 
         {/* Navigation - Compact */}
@@ -105,8 +105,8 @@ export function Sidebar() {
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 hover:scale-[1.02] ${
                   isActive
-                    ? 'bg-[#1C3F3B] text-white shadow-md'
-                    : 'text-[#888888] hover:text-[#1C3F3B] hover:bg-[#1C3F3B]/5'
+                    ? 'bg-[#285858] text-white shadow-md'
+                    : 'text-[#858585] hover:text-[#285858] hover:bg-[#285858]/5'
                 }`}
               >
                 <item.icon size={18} />
@@ -120,7 +120,7 @@ export function Sidebar() {
         <button 
           onClick={handleLogout}
           disabled={isLoading}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#888888] hover:text-[#1C3F3B] hover:bg-[#1C3F3B]/5 transition-all duration-300 hover:scale-[1.02] w-full disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#858585] hover:text-[#285858] hover:bg-[#285858]/5 transition-all duration-300 hover:scale-[1.02] w-full disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm"
         >
           <FaSignOutAlt size={18} />
           <span>{isLoading ? 'Logging out...' : 'Logout'}</span>

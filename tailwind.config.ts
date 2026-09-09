@@ -17,33 +17,39 @@ const config: Config = {
         '2xl': '1536px', // Large desktop
       },
       colors: {
-        // PayBancX FinTech Color Palette (Updated)
         'paybancx': {
-          'primary': '#1C3F3B',    // Deep Teal (Primary - Headers & Card Backgrounds)
-          'action': '#1C3F3B',     // Deep Teal (Primary Buttons & Actions)
-          'success': '#22C55E',    // Green (Success)
-          'bg': '#F5F6F8',         // Soft Gray (App Background)
-          'text-dark': '#333333',  // Dark Gray (Main text on light backgrounds)
-          'text-muted': '#888888', // Medium Gray (Subtitles & Placeholders)
-          'border': '#E2E8F0',     // Light Gray (Borders)
-          'overlay-text': '#FFFFFF',  // Pure White (Text on dark/teal backgrounds)
+          'primary': '#285858',
+          'action': '#285858',
+          'secondary': '#2F6060',
+          'success': '#3F8F63',
+          'accent': '#FF6845',
+          'bg': '#F4F3F9',
+          'text-dark': '#171717',
+          'text-muted': '#858585',
+          'placeholder': '#B5B5B5',
+          'border': '#E5E5E5',
+          'overlay-text': '#FFFFFF',
+          'soft-green': '#E8F5E8',
+          'soft-purple': '#F0E8F8',
+          'soft-blue': '#E0F0F8',
+          'soft-yellow': '#FFF4C8',
+          'soft-red': '#F8E0E0',
         },
-        // Legacy colors for backward compatibility
         'teal': {
-          'primary': '#1C3F3B',
-          'dark': '#152d2a',
-          'light': '#F5F6F8',
+          'primary': '#285858',
+          'dark': '#234B4B',
+          'light': '#F4F3F9',
         },
         'slate': {
-          'dark': '#333333',
-          'medium': '#888888',
+          'dark': '#171717',
+          'medium': '#858585',
           'light': '#FFFFFF',
         },
         'pastel': {
-          'yellow': '#FFF4D9',
-          'pink': '#FFE5EC',
-          'blue': '#E5F0F7',
-          'cyan': '#D0F0F8',
+          'yellow': '#FFF4C8',
+          'pink': '#F8E0E0',
+          'blue': '#E0F0F8',
+          'cyan': '#E8F5E8',
         },
       },
       borderRadius: {

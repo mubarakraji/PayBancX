@@ -42,7 +42,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#F5F6F8]" suppressHydrationWarning>
+      <body className="min-h-full bg-[#F4F3F9]" suppressHydrationWarning>
         <OverlayRescue />
         <ToastProvider>
           <AuthProvider>

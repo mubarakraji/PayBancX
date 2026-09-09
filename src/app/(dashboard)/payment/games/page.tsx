@@ -165,20 +165,20 @@ export default function GamesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8] pb-20 text-[#122927] md:pb-8">
-      <header className="border-b border-[#E5E7EB] bg-white">
+    <div className="min-h-screen bg-[#F4F3F9] pb-20 text-[#171717] md:pb-8">
+      <header className="border-b border-[#E5E5E5] bg-white">
         <div className="mx-0 flex max-w-7xl items-center gap-3 px-3 py-3 xs:px-4 sm:px-6 sm:py-4 md:px-8">
           <button
             onClick={() => router.back()}
             title="Go back"
             aria-label="Go back"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1C3F3B] transition-all duration-200 hover:border-[#1C3F3B]/30 hover:bg-[#F8FAFA]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E5E5E5] bg-white text-[#285858] transition-all duration-200 hover:border-[#285858]/30 hover:bg-[#F0E8F8]"
           >
             <MdArrowBack size={20} />
           </button>
           <div>
-            <h1 className="text-lg font-semibold text-[#122927] sm:text-xl">Games & Betting</h1>
-            <p className="text-sm text-[#64748B]">Fund your betting account</p>
+            <h1 className="text-lg font-semibold text-[#171717] sm:text-xl">Games & Betting</h1>
+            <p className="text-sm text-[#858585]">Fund your betting account</p>
           </div>
         </div>
       </header>
@@ -201,7 +201,7 @@ export default function GamesPage() {
             </span>
             <MdExpandMore className={`transition ${
               showPlatformSheet ? 'rotate-180' : ''
-            }`} style={{ color: '#204541' }} />
+            }`} style={{ color: '#285858' }} />
           </button>
 
           {/* Dropdown Menu */}
@@ -239,7 +239,7 @@ export default function GamesPage() {
                     <div>
                       <p className={`font-semibold text-sm ${
                         selectedPlatform?.id === platform.id ? 'text-paybancx-text-dark' : 'text-paybancx-text-dark'
-                      }`} style={selectedPlatform?.id === platform.id ? { color: '#204541' } : {}}>
+                      }`} style={selectedPlatform?.id === platform.id ? { color: '#285858' } : {}}>
                         {platform.name}
                       </p>
                       <p className="text-paybancx-text-muted text-xs mt-0.5">{platform.idType || 'Betting Platform'}</p>
@@ -302,8 +302,8 @@ export default function GamesPage() {
               </button>
             ))}
           </div>
-          <div className="flex items-center border border-[rgba(45,93,89,0.2)] rounded-2xl px-4 py-3 bg-[#FFFFFF] hover:border-[#2D5D59] focus-within:border-[#2D5D59] transition">
-            <span className="text-[#2D5D59] text-xl font-semibold">₦</span>
+          <div className="flex items-center border border-[#E5E5E5] rounded-2xl px-4 py-3 bg-white hover:border-[#285858] focus-within:border-[#285858] transition">
+            <span className="text-[#285858] text-xl font-semibold">₦</span>
             <input
               type="number"
               value={customAmount}
@@ -312,7 +312,7 @@ export default function GamesPage() {
                 setSelectedAmount(null);
               }}
               placeholder="Or enter custom amount"
-              className="flex-1 ml-3 bg-transparent text-white placeholder-[#888888] focus:outline-none text-base"
+              className="flex-1 ml-3 bg-transparent text-[#171717] placeholder-[#B5B5B5] focus:outline-none text-base"
               min="100"
             />
           </div>
@@ -323,22 +323,22 @@ export default function GamesPage() {
 
         {/* Summary */}
         {selectedPlatform && displayAmount && (
-          <section className="mb-5 p-4 bg-[#FFFFFF] border border-[rgba(45,93,89,0.2)] rounded-2xl">
-            <h3 className="text-sm font-semibold text-[#888888] mb-3">Summary</h3>
+          <section className="mb-5 p-4 bg-white border border-[#E5E5E5] rounded-2xl">
+            <h3 className="text-sm font-semibold text-[#858585] mb-3">Summary</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[#888888]">Platform:</span>
-                <span className="text-white font-medium">{selectedPlatformData?.name}</span>
+                <span className="text-[#858585]">Platform:</span>
+                <span className="text-[#171717] font-medium">{selectedPlatformData?.name}</span>
               </div>
               {customerId && (
                 <div className="flex justify-between">
-                  <span className="text-[#888888]">ID:</span>
-                  <span className="text-white font-medium">••••{customerId.slice(-4)}</span>
+                  <span className="text-[#858585]">ID:</span>
+                  <span className="text-[#171717] font-medium">••••{customerId.slice(-4)}</span>
                 </div>
               )}
               <div className="flex justify-between border-t border-[rgba(45,93,89,0.1)] pt-2 mt-2">
-                <span className="text-[#888888]">Amount:</span>
-                <span className="text-[#2D5D59] font-bold">₦{displayAmount?.toLocaleString()}</span>
+                <span className="text-[#858585]">Amount:</span>
+                <span className="text-[#285858] font-bold">₦{displayAmount?.toLocaleString()}</span>
               </div>
             </div>
           </section>
@@ -352,20 +352,20 @@ export default function GamesPage() {
             type="button"
             className="w-full py-4 rounded-full font-bold text-base transition flex items-center justify-center gap-2 shadow-md text-white"
             style={{
-              backgroundColor: isFormComplete && !isFunding ? '#204541' : '#D0D0D0',
+              backgroundColor: isFormComplete && !isFunding ? '#285858' : '#B5B5B5',
               cursor: isFormComplete && !isFunding ? 'pointer' : 'not-allowed',
               opacity: isFormComplete && !isFunding ? 1 : 0.6,
             }}
             onMouseEnter={(e) => {
               if (isFormComplete && !isFunding) {
-                e.currentTarget.style.backgroundColor = '#163631';
-                e.currentTarget.style.boxShadow = '0 10px 25px rgba(32, 69, 65, 0.3)';
+                e.currentTarget.style.backgroundColor = '#2F6060';
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(40, 88, 88, 0.3)';
                 e.currentTarget.style.transform = 'scale(1.05)';
               }
             }}
             onMouseLeave={(e) => {
               if (isFormComplete && !isFunding) {
-                e.currentTarget.style.backgroundColor = '#204541';
+                e.currentTarget.style.backgroundColor = '#285858';
                 e.currentTarget.style.boxShadow = 'md';
                 e.currentTarget.style.transform = 'scale(1)';
               }

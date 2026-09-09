@@ -178,17 +178,17 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F6F8] text-[#122927]">
+    <div className="min-h-screen bg-[#F4F3F9] text-[#171717]">
       <Header />
 
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-3 sm:px-5 sm:py-4 lg:px-6 lg:py-6">
-        <div className="flex items-start justify-between gap-3 rounded-2xl border border-[#1C3F3B]/10 bg-white/80 px-3 py-3 shadow-sm backdrop-blur sm:px-4">
+        <div className="flex items-start justify-between gap-3 rounded-2xl border border-[#285858]/15 bg-white/80 px-3 py-3 shadow-sm backdrop-blur sm:px-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#1C3F3B]/70">Good day</p>
-            <h2 className="mt-1 text-lg font-semibold text-[#122927] sm:text-xl">Welcome back</h2>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#285858]/70">Good day</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#171717] sm:text-xl">Welcome back</h2>
             <p className="mt-1 text-sm text-[#5f6b6a]">Everything you need to pay, transfer, and stay on top of bills.</p>
           </div>
-          <div className="rounded-full border border-[#1C3F3B]/10 bg-[#1C3F3B]/5 px-3 py-1.5 text-[11px] font-semibold text-[#1C3F3B]">
+          <div className="rounded-full border border-[#285858]/15 bg-[#E8F5E8] px-3 py-1.5 text-[11px] font-semibold text-[#285858]">
             Secure • Fast
           </div>
         </div>
@@ -263,7 +263,7 @@ export default function HomePage() {
                           <img alt={`promo-${index + 1}`} className="h-40 w-full object-cover sm:h-48 md:h-56" src={image} />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#0f2c2a]/80 via-[#0f2c2a]/20 to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-5">
-                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/70">Featured</p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#FFF4C8]">PayBancX spotlight</p>
                             <h3 className="mt-1 text-lg font-semibold sm:text-xl">Smart payments that feel effortless</h3>
                           </div>
                         </div>
@@ -276,7 +276,7 @@ export default function HomePage() {
                 {[0, 1, 2].map((dotIndex) => (
                   <div
                     key={dotIndex}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${activePromoIndex === dotIndex ? 'w-4 bg-[#1C3F3B]' : 'w-1.5 bg-[#1C3F3B]/30'}`}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${activePromoIndex === dotIndex ? 'w-4 bg-[#285858]' : 'w-1.5 bg-[#285858]/30'}`}
                   />
                 ))}
               </div>
